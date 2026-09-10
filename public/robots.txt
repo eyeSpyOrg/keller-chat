@@ -1,0 +1,30 @@
+# Robots policy — allow all crawlers including AI/answer engines (AEO).
+# If you need to block AI training crawlers, do it deliberately per-bot.
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /_astro/
+
+# AI crawlers explicitly welcome (AEO — answer engine optimization)
+User-agent: GPTBot
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: GoogleExtended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+Sitemap: https://eyespyfoundation.org/sitemap-index.xml

@@ -1,0 +1,202 @@
+---
+/**
+ * Universal Header — semantic landmark, keyboard-first nav,
+ * accessible mobile disclosure menu (WAI-ARIA APG pattern),
+ * aria-current on the active page.
+ * Nav items come from src/config/site.js.
+ */
+import { SITE } from '../config/site.js';
+
+const currentPath = Astro.url.pathname;
+const isActive = (href: string) =>
+  href === '/' ? currentPath === '/' : currentPath.startsWith(href);
+---
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <a href="/" class="site-header__brand" aria-label={`${SITE.name} — home`}>
+      <!-- PLACEHOLDER: Replace this SVG with the real ESF logo before launch.
+           Logo files: /public/logo.png (color) and /public/logo-high-contrast.png (HC).
+           Size target: 200×80px. See BRAND.md for logo usage guidelines. -->
+      <!-- Color logo: Orange bg (#F37121), black texts — 7.2:1 ✓ -->
+      <svg
+        class="site-header__logo site-header__logo--color"
+        width="180"
+        height="52"
+        viewBox="0 0 180 52"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <rect width="180" height="52" rx="8" fill="#F37121"/>
+        <!-- Eye icon: iris ring + pupil -->
+        <circle cx="26" cy="26" r="14" fill="#FBCDB1"/>
+        <circle cx="26" cy="26" r="9"  fill="#933001"/>
+        <circle cx="26" cy="26" r="4"  fill="#000000"/>
+        <circle cx="28" cy="24" r="1.5" fill="#FFFFFF"/>
+        <text x="50" y="22" font-family="Poppins,sans-serif" font-weight="700" font-size="14" fill="#000000">Eye Spy</text>
+        <text x="50" y="38" font-family="Open Sans,sans-serif" font-weight="600" font-size="10" fill="#3B0F00" letter-spacing="1.8">FOUNDATION</text>
+      </svg>
+      <!-- High-contrast logo: black bg, yellow text — AAA -->
+      <svg
+        class="site-header__logo site-header__logo--hc"
+        width="180"
+        height="52"
+        viewBox="0 0 180 52"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <rect width="180" height="52" rx="8" fill="#000000" stroke="#FFFFFF" stroke-width="2"/>
+        <circle cx="26" cy="26" r="14" fill="#FFD23F"/>
+        <circle cx="26" cy="26" r="9"  fill="#000000"/>
+        <circle cx="26" cy="26" r="4"  fill="#FFD23F"/>
+        <circle cx="28" cy="24" r="1.5" fill="#000000"/>
+        <text x="50" y="22" font-family="Poppins,sans-serif" font-weight="700" font-size="14" fill="#FFFFFF">Eye Spy</text>
+        <text x="50" y="38" font-family="Open Sans,sans-serif" font-weight="600" font-size="10" fill="#FFD23F" letter-spacing="1.8">FOUNDATION</text>
+      </svg>
+    </a>
+
+    <nav id="primary-nav" class="site-header__nav" aria-label="Primary" data-menu>
+      <ul>
+        {SITE.nav.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              aria-current={isActive(item.href) ? 'page' : undefined}
+            >
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="site-header__actions">
+      <a class="btn btn--primary site-header__donate" href="/support/">Donate</a>
+
+      <button
+        type="button"
+        class="site-header__menu-btn"
+        aria-expanded="false"
+        aria-controls="primary-nav"
+        data-menu-toggle
+      >
+        <span aria-hidden="true" data-menu-icon>☰</span>
+        Menu
+      </button>
+    </div>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    background: var(--color-bg);
+    border-bottom: 2px solid var(--color-border);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .site-header__inner {
+    max-width: 72rem;
+    margin-inline: auto;
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: nowrap;
+  }
+  .site-header__brand {
+    font-weight: 800;
+    font-size: 1.25rem;
+    color: var(--color-text);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  .site-header__logo { height: 52px; width: auto; }
+  .site-header__logo--hc { display: none; }
+  :global(html[data-a11y-contrast='high']) .site-header__logo--color { display: none; }
+  :global(html[data-a11y-contrast='high']) .site-header__logo--hc { display: inline; }
+
+  .site-header__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-left: auto;
+  }
+  .site-header__actions .btn { padding: 0.5rem 1.1rem; }
+  .site-header__donate { min-height: 44px; }
+
+  .site-header__menu-btn {
+    display: none;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--color-surface);
+    border: 2px solid var(--color-border);
+    border-radius: 8px;
+    padding: 0.5rem 0.9rem;
+    font-weight: 600;
+    color: var(--color-text);
+    min-height: 44px;
+  }
+  .site-header__nav ul {
+    display: flex;
+    gap: 0.05rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    flex-wrap: nowrap;
+  }
+  .site-header__nav a {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 0.6rem;
+    color: var(--color-text);
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: 8px;
+    white-space: nowrap;
+  }
+  .site-header__nav a:hover { background: var(--color-surface); }
+  .site-header__nav a[aria-current='page'] {
+    text-decoration: underline;
+    text-underline-offset: 0.3em;
+    text-decoration-thickness: 2px;
+    color: var(--color-accent);
+  }
+
+  @media (max-width: 60rem) {
+    .site-header__inner { flex-wrap: wrap; }
+    .site-header__menu-btn { display: inline-flex; }
+    .site-header__nav { display: none; width: 100%; order: 3; }
+    .site-header__nav.is-open { display: block; }
+    .site-header__nav ul { flex-direction: column; }
+    .site-header__nav a { width: 100%; }
+  }
+  @media (max-width: 30rem) {
+    .site-header__actions { gap: 0.3rem; }
+    .site-header__donate { padding: 0.5rem 0.8rem; font-size: 0.95rem; }
+    .site-header__menu-btn { padding: 0.5rem 0.7rem; }
+  }
+</style>
+
+<script>
+  const btn = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+  const nav = document.querySelector<HTMLElement>('[data-menu]');
+  if (btn && nav) {
+    btn.addEventListener('click', () => {
+      const open = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!open));
+      nav.classList.toggle('is-open', !open);
+    });
+    nav.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && nav.classList.contains('is-open')) {
+        nav.classList.remove('is-open');
+        btn.setAttribute('aria-expanded', 'false');
+        btn.focus();
+      }
+    });
+  }
+</script>

@@ -1,0 +1,41 @@
+---
+/**
+ * SizzleReel — YouTube facade for a video hero/sizzle section.
+ * Used on event or campaign pages. Pass youtubeId to activate;
+ * omit it and the component shows a "coming soon" placeholder.
+ */
+interface Props {
+  youtubeId?: string;
+  title?: string;
+}
+const { youtubeId = '', title = '[PLACEHOLDER: Video title]' } = Astro.props;
+---
+
+{youtubeId ? (
+  <div class="reel reel--active">
+    <iframe
+      class="reel__frame"
+      src={`https://www.youtube-nocookie.com/embed/${youtubeId}?rel=0`}
+      title={title}
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen
+    ></iframe>
+  </div>
+) : (
+  <div class="reel reel--placeholder" aria-hidden="true">
+    <p class="reel__msg">[PLACEHOLDER: Add a YouTube video ID to activate this section]</p>
+  </div>
+)}
+
+<style>
+  .reel { border-radius: var(--radius-lg); overflow: hidden; }
+  .reel--active { aspect-ratio: 16 / 9; }
+  .reel__frame { width: 100%; height: 100%; border: 0; display: block; }
+  .reel--placeholder {
+    aspect-ratio: 16 / 9;
+    background: var(--color-surface);
+    border: 2px dashed var(--color-border);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .reel__msg { color: var(--color-text-muted); font-style: italic; }
+</style>

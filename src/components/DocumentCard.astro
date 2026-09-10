@@ -1,0 +1,119 @@
+---
+/**
+ * DocumentCard.astro — downloadable document card with type icon,
+ * year, and GA4 download tracking.
+ *
+ * Usage:
+ *   <DocumentCard
+ *     title="2024 Annual Report"
+ *     description="Our full impact report for the fiscal year 2024."
+ *     href="/documents/annual-report-2024.pdf"
+ *     year="2024"
+ *     type="annual-report"
+ *   />
+ */
+
+type DocType = 'annual-report' | '990' | 'audit' | 'press-kit' | 'other';
+
+interface Props {
+  title: string;
+  description?: string;
+  href: string;
+  year?: string;
+  type?: DocType;
+  fileSize?: string;
+}
+const { title, description, href, year, type = 'other', fileSize } = Astro.props;
+
+const icons: Record<DocType, string> = {
+  'annual-report': '📊',
+  '990': '📋',
+  'audit': '✅',
+  'press-kit': '📰',
+  'other': '📄',
+};
+const labels: Record<DocType, string> = {
+  'annual-report': 'Annual Report',
+  '990': 'Form 990',
+  'audit': 'Audit Report',
+  'press-kit': 'Press Kit',
+  'other': 'Document',
+};
+---
+
+<article class="doc-card">
+  <div class="doc-card__icon" aria-hidden="true">{icons[type]}</div>
+  <div class="doc-card__body">
+    <p class="doc-card__type">{labels[type]}{year && ` · ${year}`}</p>
+    <h3 class="doc-card__title">{title}</h3>
+    {description && <p class="doc-card__desc">{description}</p>}
+  </div>
+  <a
+    class="btn doc-card__download"
+    href={href}
+    download
+    data-doc-type={type}
+    data-doc-year={year}
+    aria-label={`Download ${title}${fileSize ? ` (${fileSize})` : ''}`}
+  >
+    Download {fileSize && <span class="doc-card__size">({fileSize})</span>}
+  </a>
+</article>
+
+<style>
+  .doc-card {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: var(--space-s);
+    padding: var(--space-s) var(--space-m);
+    background: var(--color-surface);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+  }
+  .doc-card__icon { font-size: 2.25rem; line-height: 1; }
+  .doc-card__type {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin: 0 0 0.25rem;
+  }
+  .doc-card__title { margin: 0 0 0.25rem; font-size: var(--step-0); }
+  .doc-card__desc { margin: 0; font-size: 0.875rem; color: var(--color-text-muted); }
+  .doc-card__download {
+    white-space: nowrap;
+    background: var(--color-accent);
+    color: #fff;
+    border: 2px solid var(--color-accent);
+    border-radius: var(--radius-sm);
+    padding: 0.5rem 1rem;
+    font-weight: 700;
+    font-size: 0.875rem;
+    text-decoration: none;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+  .doc-card__download:hover { background: var(--color-accent-hover); border-color: var(--color-accent-hover); }
+  .doc-card__size { font-weight: 400; font-size: 0.8rem; }
+
+  @media (max-width: 40rem) {
+    .doc-card { grid-template-columns: auto 1fr; grid-template-rows: auto auto; }
+    .doc-card__download { grid-column: 1 / -1; justify-content: center; }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLAnchorElement>('[data-doc-type]').forEach((link) => {
+    link.addEventListener('click', () => {
+      (window as any).gtag?.('event', 'document_download', {
+        document_type: link.dataset.docType,
+        year: link.dataset.docYear ?? 'unknown',
+      });
+    });
+  });
+</script>

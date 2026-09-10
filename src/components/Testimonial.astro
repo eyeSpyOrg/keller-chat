@@ -1,0 +1,100 @@
+---
+/**
+ * Testimonial.astro — donor/participant testimonial with optional avatar.
+ * Renders a blockquote with attribution; can be used standalone or in a grid.
+ *
+ * Usage:
+ *   <Testimonial
+ *     quote="This organization changed how I experience my community."
+ *     name="James R."
+ *     attribution="Donor since 2022"
+ *     avatarSrc="/images/james.jpg"
+ *     avatarAlt="James R."
+ *   />
+ */
+
+interface Props {
+  quote: string;
+  name: string;
+  attribution?: string;
+  avatarSrc?: string;
+  avatarAlt?: string;
+  variant?: 'default' | 'featured';
+}
+const { quote, name, attribution, avatarSrc, avatarAlt = '', variant = 'default' } = Astro.props;
+---
+
+<figure class={`testimonial testimonial--${variant}`}>
+  <span class="testimonial__mark" aria-hidden="true">&ldquo;</span>
+  <blockquote>
+    <p>{quote}</p>
+  </blockquote>
+  <figcaption class="testimonial__cap">
+    {avatarSrc && (
+      <img
+        src={avatarSrc}
+        alt={avatarAlt}
+        width="48"
+        height="48"
+        loading="lazy"
+        decoding="async"
+        class="testimonial__avatar"
+      />
+    )}
+    <div>
+      <span class="testimonial__name">{name}</span>
+      {attribution && <span class="testimonial__role">{attribution}</span>}
+    </div>
+  </figcaption>
+</figure>
+
+<style>
+  .testimonial {
+    background: var(--color-surface);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: var(--space-m);
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+    box-shadow: var(--shadow-sm);
+    position: relative;
+  }
+  .testimonial--featured {
+    background: var(--color-teal-tint);
+    border-color: var(--color-accent);
+    box-shadow: var(--shadow);
+  }
+  .testimonial__mark {
+    font-family: var(--font-display);
+    font-size: 5rem;
+    line-height: 0.5;
+    color: var(--color-accent);
+    opacity: 0.25;
+    user-select: none;
+    pointer-events: none;
+  }
+  .testimonial blockquote {
+    margin: 0;
+    flex: 1;
+  }
+  .testimonial blockquote p {
+    font-size: var(--step-1);
+    font-style: italic;
+    line-height: 1.6;
+    margin: 0;
+    color: var(--color-text);
+  }
+  .testimonial__cap { display: flex; align-items: center; gap: 0.75rem; }
+  .testimonial__avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 2px solid var(--color-border);
+  }
+  .testimonial__name { font-weight: 700; display: block; }
+  .testimonial__role { font-size: 0.875rem; color: var(--color-text-muted); display: block; }
+</style>

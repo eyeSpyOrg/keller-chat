@@ -1,0 +1,137 @@
+---
+/**
+ * StorySection.astro — alternating left/right story + impact pairing.
+ * Left: story (text, optional image, optional quote).
+ * Right: impact (metrics, CTA).
+ * Flips column order on alternating instances.
+ *
+ * Usage:
+ *   <StorySection
+ *     flip={false}
+ *     eyebrow="Real People, Real Change"
+ *     heading="How Navigation Changes Everything"
+ *     body="For Marcus, learning to use public transit..."
+ *     imageSrc="/images/marcus.jpg"
+ *     imageAlt="Marcus waiting at a bus stop"
+ *     metrics={[{ number: '300+', label: 'transit trips logged' }]}
+ *     ctaLabel="Support navigation programs"
+ *     ctaHref="/support/"
+ *   />
+ */
+
+interface Metric { number: string; label: string }
+interface Props {
+  flip?: boolean;
+  eyebrow?: string;
+  heading: string;
+  body: string;
+  quote?: string;
+  quoteAttr?: string;
+  imageSrc?: string;
+  imageAlt?: string;
+  metrics?: Metric[];
+  ctaLabel?: string;
+  ctaHref?: string;
+}
+const {
+  flip = false,
+  eyebrow,
+  heading,
+  body,
+  quote,
+  quoteAttr,
+  imageSrc,
+  imageAlt = '',
+  metrics = [],
+  ctaLabel,
+  ctaHref,
+} = Astro.props;
+---
+
+<div class={`story-section${flip ? ' story-section--flip' : ''}`}>
+  <div class="story-section__story">
+    {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+    <h2>{heading}</h2>
+    <p class="prose">{body}</p>
+    {quote && (
+      <blockquote class="story-section__quote">
+        <p>&ldquo;{quote}&rdquo;</p>
+        {quoteAttr && <footer><cite>{quoteAttr}</cite></footer>}
+      </blockquote>
+    )}
+    {imageSrc && (
+      <div class="story-section__img-wrap">
+        <img src={imageSrc} alt={imageAlt} width="640" height="360" loading="lazy" decoding="async" />
+      </div>
+    )}
+  </div>
+
+  <div class="story-section__impact">
+    {metrics.length > 0 && (
+      <ul class="story-section__metrics">
+        {metrics.map((m) => (
+          <li class="story-section__metric">
+            <span class="story-section__number">{m.number}</span>
+            <span class="story-section__mlabel">{m.label}</span>
+          </li>
+        ))}
+      </ul>
+    )}
+    {ctaLabel && ctaHref && (
+      <a class="btn btn--primary" href={ctaHref}>{ctaLabel}</a>
+    )}
+  </div>
+</div>
+
+<style>
+  .story-section {
+    display: grid;
+    gap: var(--space-l);
+    align-items: start;
+  }
+  @media (min-width: 52rem) {
+    .story-section { grid-template-columns: 1fr 1fr; align-items: center; }
+    .story-section--flip .story-section__story { order: 2; }
+    .story-section--flip .story-section__impact { order: 1; }
+  }
+  .story-section__story > * + * { margin-top: var(--space-s); }
+  .story-section__quote {
+    border-left: 4px solid var(--color-accent);
+    padding: var(--space-xs) var(--space-s);
+    margin: 0;
+    background: var(--color-teal-tint);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  }
+  .story-section__quote p { font-style: italic; margin: 0 0 0.35rem; }
+  .story-section__quote footer cite { font-size: 0.875rem; color: var(--color-text-muted); font-style: normal; }
+  .story-section__img-wrap { border-radius: var(--radius); overflow: hidden; aspect-ratio: 16 / 9; }
+  .story-section__img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  .story-section__impact {
+    background: var(--color-surface);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: var(--space-m);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-m);
+    box-shadow: var(--shadow);
+  }
+  .story-section__metrics { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-s); }
+  .story-section__metric {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding-bottom: var(--space-s);
+    border-bottom: 1px solid var(--color-border);
+  }
+  .story-section__metric:last-child { padding-bottom: 0; border-bottom: 0; }
+  .story-section__number {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--step-2);
+    color: var(--color-accent);
+    line-height: 1;
+  }
+  .story-section__mlabel { font-weight: 600; font-size: var(--step-0); color: var(--color-text); }
+</style>

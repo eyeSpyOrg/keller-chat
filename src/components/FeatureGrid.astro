@@ -1,0 +1,82 @@
+---
+/**
+ * FeatureGrid.astro — icon + heading + body feature/program grid.
+ * Typically used for "What We Do" / "Our Programs" overviews.
+ *
+ * Usage:
+ *   <FeatureGrid
+ *     features={[
+ *       { icon: '🧭', heading: 'Navigation Training', body: '...' },
+ *       { icon: '💬', heading: 'Peer Support', body: '...' },
+ *     ]}
+ *   />
+ */
+
+import { uniqueId } from '../utils/uniqueId';
+
+interface Feature {
+  icon?: string;
+  heading: string;
+  body: string;
+  href?: string;
+}
+interface Props {
+  features: Feature[];
+  heading?: string;
+  eyebrow?: string;
+  columns?: 2 | 3 | 4;
+}
+const { features, heading, eyebrow, columns = 3 } = Astro.props;
+const headingId = heading ? uniqueId('fg-heading') : undefined;
+---
+
+<section class="feature-grid" aria-labelledby={headingId}>
+  {(eyebrow || heading) && (
+    <div class="section-head">
+      {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+      {heading && <h2 id={headingId}>{heading}</h2>}
+    </div>
+  )}
+  <ul class={`fg-grid fg-grid--${columns}`}>
+    {features.map((f) => (
+      <li class="fg-card">
+        {f.icon && <span class="fg-card__icon" aria-hidden="true">{f.icon}</span>}
+        <h3 class="fg-card__heading">{f.heading}</h3>
+        <p class="fg-card__body">{f.body}</p>
+        {f.href && <a class="fg-card__link" href={f.href}>Learn more<span class="sr-only"> about {f.heading}</span></a>}
+      </li>
+    ))}
+  </ul>
+</section>
+
+<style>
+  .section-head { margin-bottom: var(--space-m); }
+  .fg-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-m);
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 36rem) { .fg-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 52rem) {
+    .fg-grid--3 { grid-template-columns: repeat(3, 1fr); }
+    .fg-grid--4 { grid-template-columns: repeat(4, 1fr); }
+  }
+  .fg-card {
+    background: var(--color-surface);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: var(--space-m);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    box-shadow: var(--shadow-sm);
+  }
+  .fg-card__icon { font-size: 2.25rem; line-height: 1; }
+  .fg-card__heading { margin: 0; font-size: var(--step-1); }
+  .fg-card__body { margin: 0; color: var(--color-text-muted); flex: 1; }
+  .fg-card__link { font-weight: 700; color: var(--color-accent); text-decoration: underline; align-self: flex-start; }
+  .fg-card__link:hover { color: var(--color-accent-hover); }
+</style>

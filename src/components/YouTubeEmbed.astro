@@ -1,0 +1,103 @@
+---
+/**
+ * YouTubeEmbed.astro — accessible, lazy-loaded YouTube embed.
+ * Uses a facade pattern: shows a thumbnail + play button until the user
+ * clicks, then swaps in the iframe. This keeps initial page weight low
+ * and avoids loading YouTube scripts until needed.
+ *
+ * Usage:
+ *   <YouTubeEmbed videoId="dQw4w9WgXcQ" title="Our 2024 impact reel" />
+ */
+
+interface Props {
+  videoId: string;
+  title: string;
+  description?: string;
+}
+const { videoId, title, description } = Astro.props;
+const uid = `yt-${videoId}`;
+const thumb = `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg`;
+---
+
+<div class="yt-embed" data-yt-embed data-video-id={videoId} id={uid}>
+  <button
+    class="yt-embed__facade"
+    aria-label={`Play video: ${title}`}
+    type="button"
+  >
+    <img
+      src={thumb}
+      alt=""
+      width="1280"
+      height="720"
+      loading="lazy"
+      decoding="async"
+    />
+    <span class="yt-embed__play" aria-hidden="true">
+      <svg viewBox="0 0 68 48" width="68" height="48" focusable="false">
+        <path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55c-2.93.78-4.63 3.26-5.42 6.19C.06 13.05 0 24 0 24s.06 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C67.94 34.95 68 24 68 24s-.06-10.95-1.48-16.26z" fill="#f00"/>
+        <path d="M45 24 27 14v20" fill="#fff"/>
+      </svg>
+    </span>
+  </button>
+  {description && <p class="yt-embed__desc">{description}</p>}
+</div>
+
+<style>
+  .yt-embed { border-radius: var(--radius); overflow: hidden; }
+  .yt-embed__facade {
+    position: relative;
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #000;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+  }
+  .yt-embed__facade img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: opacity 0.2s;
+  }
+  .yt-embed__facade:hover img { opacity: 0.85; }
+  .yt-embed__play {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+  }
+  .yt-embed__play svg { filter: drop-shadow(0 2px 6px rgba(0,0,0,.5)); }
+  .yt-embed iframe {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: 0;
+  }
+  .yt-embed__desc {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    margin: 0.5rem 0 0;
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-yt-embed]').forEach((wrap) => {
+    const btn = wrap.querySelector<HTMLButtonElement>('button')!;
+    const videoId = wrap.dataset.videoId!;
+    btn.addEventListener('click', () => {
+      const iframe = document.createElement('iframe');
+      iframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0`;
+      iframe.title = btn.getAttribute('aria-label') ?? 'YouTube video';
+      iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+      iframe.allowFullscreen = true;
+      btn.replaceWith(iframe);
+      iframe.focus();
+      // GA4
+      (window as any).gtag?.('event', 'video_play', { video_id: videoId });
+    }, { once: true });
+  });
+</script>

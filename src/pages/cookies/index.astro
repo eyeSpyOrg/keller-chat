@@ -1,0 +1,93 @@
+---
+/**
+ * Cookie Policy — GDPR/CCPA-ready, auto-generated from legal.ts.
+ * Lists cookie categories, purposes, and opt-out instructions.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { LEGAL } from '../../config/legal.ts';
+---
+
+<BaseLayout
+  title="Cookie Policy"
+  description={`Cookie policy for ${LEGAL.orgName}. Learn what cookies we use, why, and how to control them.`}
+  noindex={false}
+>
+  <div class="band">
+    <div class="container container--narrow legal-page">
+      <header class="legal-page__header">
+        <h1>Cookie Policy</h1>
+        <p class="legal-page__meta">Last updated: {LEGAL.privacyLastUpdated}</p>
+      </header>
+
+      <section aria-labelledby="cookies-what">
+        <h2 id="cookies-what">What Are Cookies?</h2>
+        <p>Cookies are small text files placed on your device when you visit a website. They help the site remember your preferences and understand how you use it.</p>
+      </section>
+
+      <section aria-labelledby="cookies-types">
+        <h2 id="cookies-types">Cookies We Use</h2>
+        <div class="cookie-table-wrap">
+          <table class="cookie-table">
+            <thead>
+              <tr>
+                <th scope="col">Category</th>
+                <th scope="col">Purpose</th>
+                <th scope="col">Examples</th>
+              </tr>
+            </thead>
+            <tbody>
+              {LEGAL.cookieTypes.map((c) => (
+                <tr>
+                  <td><strong>{c.name}</strong></td>
+                  <td>{c.purpose}</td>
+                  <td><code>{c.examples}</code></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section aria-labelledby="cookies-control">
+        <h2 id="cookies-control">How to Control Cookies</h2>
+        <p>You can control non-essential cookies through our consent banner (shown on your first visit). You can also:</p>
+        <ul>
+          <li>Change browser settings to block or delete cookies (see your browser's help docs)</li>
+          <li>Opt out of Google Analytics at <a href="https://tools.google.com/dlpage/gaoptout" rel="noopener noreferrer" target="_blank">tools.google.com/dlpage/gaoptout<span class="sr-only"> (opens in new tab)</span></a></li>
+          <li>Opt out of HubSpot tracking at <a href="https://legal.hubspot.com/privacy-policy" rel="noopener noreferrer" target="_blank">legal.hubspot.com<span class="sr-only"> (opens in new tab)</span></a></li>
+        </ul>
+        <p>Blocking essential cookies may affect site functionality. Non-essential cookies are only activated after you grant consent.</p>
+      </section>
+
+      <section aria-labelledby="cookies-ccpa">
+        <h2 id="cookies-ccpa">California Residents (CCPA)</h2>
+        <p>We do not sell your personal information. If you are a California resident, you have the right to know what personal data we collect and to request its deletion. See our <a href="/privacy/">Privacy Policy</a> for details or email <a href={`mailto:${LEGAL.email}`}>{LEGAL.email}</a>.</p>
+      </section>
+
+      <section aria-labelledby="cookies-contact">
+        <h2 id="cookies-contact">Questions</h2>
+        <p>Email <a href={`mailto:${LEGAL.email}`}>{LEGAL.email}</a> with any questions about our cookie practices.</p>
+      </section>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .legal-page { padding-block: var(--space-xl); }
+  .legal-page__header { margin-bottom: var(--space-l); }
+  .legal-page__meta { color: var(--color-text-muted); font-size: 0.875rem; margin-top: 0.5rem; }
+  .legal-page section { margin-bottom: var(--space-l); }
+  .legal-page h2 { margin-bottom: var(--space-xs); }
+  .legal-page p, .legal-page li { max-width: 70ch; line-height: 1.7; }
+  .legal-page ul { padding-left: 1.5rem; display: flex; flex-direction: column; gap: 0.35rem; }
+  .cookie-table-wrap { overflow-x: auto; }
+  .cookie-table { border-collapse: collapse; width: 100%; min-width: 38rem; }
+  .cookie-table th, .cookie-table td {
+    border: 1px solid var(--color-border);
+    padding: 0.6rem 0.9rem;
+    text-align: left;
+    vertical-align: top;
+  }
+  .cookie-table th { background: var(--color-teal-tint); font-weight: 700; }
+  .cookie-table code { font-size: 0.8rem; background: var(--color-surface); padding: 0.1rem 0.35rem; border-radius: 4px; }
+</style>

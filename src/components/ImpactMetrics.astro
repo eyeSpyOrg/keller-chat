@@ -1,0 +1,96 @@
+---
+/**
+ * ImpactMetrics.astro — responsive stat grid for nonprofit impact numbers.
+ * Story-focused copy pairs a large number with a human-scale description.
+ *
+ * Usage:
+ *   <ImpactMetrics
+ *     heading="Our Impact in Numbers"
+ *     metrics={[
+ *       { number: '1,200+', label: 'people served', detail: 'across 5 counties' },
+ *       { number: '98%', label: 'of clients', detail: 'report improved quality of life' },
+ *     ]}
+ *   />
+ */
+
+import { uniqueId } from '../utils/uniqueId';
+
+interface Metric {
+  number: string;
+  label: string;
+  detail?: string;
+  icon?: string;
+}
+interface Props {
+  metrics: Metric[];
+  heading?: string;
+  eyebrow?: string;
+}
+const { metrics, heading, eyebrow } = Astro.props;
+const headingId = heading ? uniqueId('im-heading') : undefined;
+---
+
+<section class="impact-metrics" aria-labelledby={headingId}>
+  {(eyebrow || heading) && (
+    <div class="section-head">
+      {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+      {heading && <h2 id={headingId}>{heading}</h2>}
+    </div>
+  )}
+  <ul class={`im-grid im-grid--${Math.min(metrics.length, 4)}`}>
+    {metrics.map((m) => (
+      <li class="im-card">
+        {m.icon && <span class="im-card__icon" aria-hidden="true">{m.icon}</span>}
+        <span class="im-card__number">{m.number}</span>
+        <span class="im-card__label">{m.label}</span>
+        {m.detail && <span class="im-card__detail">{m.detail}</span>}
+      </li>
+    ))}
+  </ul>
+</section>
+
+<style>
+  .section-head { margin-bottom: var(--space-m); }
+  .im-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-s);
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media (min-width: 52rem) {
+    .im-grid--3 { grid-template-columns: repeat(3, 1fr); }
+    .im-grid--4 { grid-template-columns: repeat(4, 1fr); }
+  }
+  .im-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.25rem;
+    padding: var(--space-m) var(--space-s);
+    background: var(--color-surface);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+  }
+  .im-card__icon { font-size: 2rem; line-height: 1; margin-bottom: 0.25rem; }
+  .im-card__number {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--step-3);
+    color: var(--color-accent);
+    line-height: 1.1;
+  }
+  .im-card__label {
+    font-weight: 600;
+    font-size: var(--step-0);
+    color: var(--color-text);
+  }
+  .im-card__detail {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    max-width: 18ch;
+  }
+</style>

@@ -1,0 +1,182 @@
+---
+/**
+ * Homepage — Eye Spy Foundation nonprofit template.
+ * Hero → programs teaser → impact metrics → story → newsletter → FAQ.
+ * Replace ImagePlaceholder instances with real photography before launch.
+ * Replace [PLACEHOLDER] text with real content via LEGAL_BRAIN.md.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import FAQ from '../components/FAQ.astro';
+import ImpactMetrics from '../components/ImpactMetrics.astro';
+import FeatureGrid from '../components/FeatureGrid.astro';
+import NewsletterSignup from '../components/NewsletterSignup.astro';
+import ImagePlaceholder from '../components/ImagePlaceholder.astro';
+import { SITE } from '../config/site.js';
+
+const programs = [
+  {
+    icon: '🧭',
+    heading: 'Resource Navigation',
+    body: 'One-on-one help finding the programs, services, and benefits most people never knew existed — until now.',
+    href: '/programs/',
+  },
+  {
+    icon: '📚',
+    heading: 'Community Workshops',
+    body: 'Free monthly workshops on assistive technology, orientation, financial literacy, and peer support.',
+    href: '/programs/',
+  },
+  {
+    icon: '🤝',
+    heading: 'Peer Mentorship',
+    body: 'Connecting people who are newly navigating vision loss with community members who have been there.',
+    href: '/programs/',
+  },
+];
+
+const metrics = [
+  { number: '1,200+', label: 'people served', icon: '👁️' },
+  { number: '$0', label: 'cost to the community', icon: '💚' },
+  { number: '14', label: 'community partners', icon: '🤝' },
+  { number: '98%', label: 'say they found what they needed', icon: '⭐' },
+];
+
+const faqs = [
+  {
+    question: 'What is Eye Spy Foundation?',
+    answer:
+      'Eye Spy Foundation helps blind and low vision people navigate toward a more informed, connected, and confident life. We provide navigation support, community events, internships, and a curated resource directory.',
+  },
+  {
+    question: 'Who does Eye Spy serve?',
+    answer:
+      'We serve three audiences: people directly affected by blindness or low vision (30,000+ in Jacksonville), advocates and allies (60,000+), and professionals like doctors, therapists, and educators (10,000+).',
+  },
+  {
+    question: 'Where is Eye Spy located?',
+    answer:
+      'Eye Spy Foundation is based in Jacksonville, Florida, serving Northeast Florida and expanding nationally.',
+  },
+  {
+    question: 'Are your programs free?',
+    answer:
+      'Yes — always. Every program is free to the blind and low vision community. We are funded by donations, grants, and community partnerships.',
+  },
+  {
+    question: 'How can I get involved?',
+    answer:
+      'You can volunteer, donate, or access resources on EyeSpy.org. Visit our Contact page to learn more.',
+  },
+];
+---
+
+<BaseLayout
+  title="Home"
+  description="Eye Spy Foundation helps blind and low vision people navigate toward a more informed, connected, and confident life — free navigation support, workshops, and community for all."
+>
+  <!-- Hero -->
+  <Hero
+    eyebrow="Eye Spy Foundation"
+    heading="Navigate. Discover. Find. Connect."
+    body="We help the blind and low vision community find the resources, services, and people that make for a better low vision lifestyle — for free, for everyone."
+    primaryCta={{ label: 'See our programs', href: '/programs/' }}
+    secondaryCta={{ label: 'Support our work', href: '/support/' }}
+    variant="teal"
+  />
+
+  <!-- Programs teaser -->
+  <div class="band">
+    <div class="container">
+      <FeatureGrid
+        eyebrow="What We Do"
+        heading="Three Ways We Help"
+        features={programs}
+        columns={3}
+      />
+      <div class="cta-center">
+        <a class="btn btn--primary" href="/programs/">See all programs</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Impact metrics -->
+  <div class="band band--teal">
+    <div class="container">
+      <ImpactMetrics
+        eyebrow="The Work in Numbers"
+        heading="What We've Helped People Find"
+        metrics={metrics}
+      />
+    </div>
+  </div>
+
+  <!-- Story / photo split -->
+  <section class="band" aria-labelledby="story-heading">
+    <div class="container story-split">
+      <div class="story-split__text">
+        <p class="eyebrow">Why We Exist</p>
+        <h2 id="story-heading">The Help Was There. No One Had Put It in One Place.</h2>
+        <p class="prose">
+          Too many people in the blind and low vision community spend months
+          searching for help that already exists — scattered across dozens of
+          websites, disconnected organizations, and phone numbers that go
+          nowhere. Eye Spy Foundation was built to fix that.
+        </p>
+        <p class="prose">
+          We greet everyone with a hug or a handshake. That is not a tagline.
+          It is how we show up.
+        </p>
+        <div class="cta-row">
+          <a class="btn btn--primary" href="/about/">Our story</a>
+          <a class="btn btn--secondary" href="/support/">Support this work</a>
+        </div>
+      </div>
+      <div class="story-split__media">
+        <ImagePlaceholder
+          label="[PLACEHOLDER: Eye Spy Foundation community photo — real photography required before launch]"
+          policy="real"
+          ratio="4 / 3"
+          icon="👁️"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- Newsletter -->
+  <div class="band band--gold">
+    <div class="container container--narrow">
+      <NewsletterSignup
+        heading="Stay Connected"
+        description="Resources, events, and stories from the blind and low vision community — delivered to your inbox. No spam, unsubscribe anytime."
+      />
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="band">
+    <div class="container container--narrow">
+      <p class="eyebrow">Good to Know</p>
+      <FAQ faqs={faqs} heading="Frequently Asked Questions" />
+      <p class="prose faq-footer">
+        More questions? Visit the <a href="/faq/">full FAQ page</a> or email
+        <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.
+      </p>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .story-split {
+    display: grid;
+    gap: var(--space-l);
+    align-items: center;
+  }
+  .story-split__text > * + * { margin-top: var(--space-s); }
+  @media (min-width: 52rem) {
+    .story-split { grid-template-columns: 1fr 1fr; gap: var(--space-xl); }
+  }
+  .cta-center { text-align: center; margin-top: var(--space-m); }
+  .cta-row { display: flex; gap: var(--space-s); flex-wrap: wrap; margin-top: var(--space-m); }
+  .faq-footer { margin-top: var(--space-m); }
+</style>

@@ -1,0 +1,105 @@
+---
+/**
+ * DocumentsGrid.astro — filterable grid of DocumentCard items.
+ * Renders all documents; JS handles year/type filter switching.
+ *
+ * Usage:
+ *   <DocumentsGrid docs={[
+ *     { title: '2024 Annual Report', href: '/docs/ar-2024.pdf', year: '2024', type: 'annual-report' },
+ *     { title: 'Form 990 (2023)', href: '/docs/990-2023.pdf', year: '2023', type: '990' },
+ *   ]} />
+ */
+
+import DocumentCard from './DocumentCard.astro';
+
+type DocType = 'annual-report' | '990' | 'audit' | 'press-kit' | 'other';
+interface Doc {
+  title: string;
+  description?: string;
+  href: string;
+  year?: string;
+  type?: DocType;
+  fileSize?: string;
+}
+interface Props {
+  docs: Doc[];
+  heading?: string;
+  showFilters?: boolean;
+}
+const { docs, heading, showFilters = true } = Astro.props;
+const years = [...new Set(docs.map((d) => d.year).filter(Boolean))].sort((a, b) => Number(b) - Number(a));
+const types = [...new Set(docs.map((d) => d.type ?? 'other'))];
+---
+
+{heading && <h2 class="docs-grid__heading">{heading}</h2>}
+
+{showFilters && (years.length > 1 || types.length > 1) && (
+  <div class="docs-filters" role="group" aria-label="Filter documents">
+    <button class="docs-filter-btn docs-filter-btn--active" data-filter="all" type="button">All</button>
+    {types.map((t) => (
+      <button class="docs-filter-btn" data-filter={`type:${t}`} type="button">
+        {t === 'annual-report' ? 'Annual Reports' : t === '990' ? 'Form 990' : t === 'audit' ? 'Audits' : t === 'press-kit' ? 'Press Kit' : 'Other'}
+      </button>
+    ))}
+    {years.map((y) => (
+      <button class="docs-filter-btn" data-filter={`year:${y}`} type="button">{y}</button>
+    ))}
+  </div>
+)}
+
+<ul class="docs-grid">
+  {docs.map((doc) => (
+    <li data-year={doc.year} data-type={doc.type ?? 'other'}>
+      <DocumentCard {...doc} />
+    </li>
+  ))}
+</ul>
+
+{docs.length === 0 && (
+  <p class="docs-grid__empty">No documents available at this time.</p>
+)}
+
+<style>
+  .docs-grid__heading { margin-bottom: var(--space-m); }
+  .docs-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: var(--space-m);
+  }
+  .docs-filter-btn {
+    padding: 0.4rem 0.9rem;
+    border: 2px solid var(--color-border);
+    border-radius: 999px;
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+    min-height: 44px;
+  }
+  .docs-filter-btn:hover { border-color: var(--color-accent); }
+  .docs-filter-btn--active { background: var(--color-accent); color: #fff; border-color: var(--color-accent); }
+  .docs-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-s); }
+  .docs-grid li[hidden] { display: none; }
+  .docs-grid__empty { color: var(--color-text-muted); font-style: italic; }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.docs-filters').forEach((bar) => {
+    const grid = bar.nextElementSibling as HTMLElement;
+    const items = grid?.querySelectorAll<HTMLElement>('li') ?? [];
+    bar.querySelectorAll<HTMLButtonElement>('[data-filter]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        bar.querySelectorAll('[data-filter]').forEach((b) => b.classList.remove('docs-filter-btn--active'));
+        btn.classList.add('docs-filter-btn--active');
+        const f = btn.dataset.filter!;
+        items.forEach((item) => {
+          if (f === 'all') { item.hidden = false; return; }
+          const [key, val] = f.split(':');
+          item.hidden = item.dataset[key] !== val;
+        });
+      });
+    });
+  });
+</script>

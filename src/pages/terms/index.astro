@@ -1,0 +1,85 @@
+---
+/**
+ * Terms of Service — auto-generated from legal.ts / LEGAL_BRAIN.md.
+ * Update LEGAL_BRAIN.md with your org details; this page adapts automatically.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { LEGAL } from '../../config/legal.ts';
+---
+
+<BaseLayout
+  title="Terms of Service"
+  description={`Terms of Service for ${LEGAL.orgName}. Last updated ${LEGAL.termsLastUpdated}.`}
+  noindex={false}
+>
+  <div class="band">
+    <div class="container container--narrow legal-page">
+      <header class="legal-page__header">
+        <h1>Terms of Service</h1>
+        <p class="legal-page__meta">Last updated: {LEGAL.termsLastUpdated} · Governing law: {LEGAL.governingLaw}</p>
+      </header>
+
+      <section aria-labelledby="terms-agreement">
+        <h2 id="terms-agreement">Agreement to Terms</h2>
+        <p>By accessing or using the {LEGAL.orgName} website (the "Site"), you agree to be bound by these Terms of Service. If you do not agree, please do not use the Site.</p>
+      </section>
+
+      <section aria-labelledby="terms-use">
+        <h2 id="terms-use">Permitted Use</h2>
+        <p>The Site is provided for informational purposes and to facilitate donations, volunteer sign-ups, and event registrations in support of our nonprofit mission. You agree to use the Site only for lawful purposes and in a manner that does not infringe the rights of others.</p>
+        <p>You may not:</p>
+        <ul>
+          <li>Use the Site for any commercial purpose without our written consent</li>
+          <li>Attempt to gain unauthorized access to any system or data</li>
+          <li>Transmit harmful, fraudulent, or misleading content</li>
+          <li>Interfere with the Site's operation</li>
+        </ul>
+      </section>
+
+      <section aria-labelledby="terms-donations">
+        <h2 id="terms-donations">Donations</h2>
+        <p>Donations made through the Site are processed by Stripe and are final. {LEGAL.taxStatement}</p>
+        <p>Recurring donations may be cancelled at any time by accessing the Stripe customer portal linked in your receipt email or by contacting us at <a href={`mailto:${LEGAL.email}`}>{LEGAL.email}</a>.</p>
+      </section>
+
+      <section aria-labelledby="terms-ip">
+        <h2 id="terms-ip">Intellectual Property</h2>
+        <p>All content on this Site — including text, images, logos, and graphics — is the property of {LEGAL.orgName} or its licensors and is protected by copyright law. You may share links to our content; reproduction for non-personal use requires written permission.</p>
+      </section>
+
+      <section aria-labelledby="terms-disclaimer">
+        <h2 id="terms-disclaimer">Disclaimer of Warranties</h2>
+        <p>The Site is provided "as is" without warranties of any kind, express or implied. We do not warrant that the Site will be uninterrupted, error-free, or free of viruses.</p>
+      </section>
+
+      <section aria-labelledby="terms-liability">
+        <h2 id="terms-liability">Limitation of Liability</h2>
+        <p>To the fullest extent permitted by law, {LEGAL.orgName} will not be liable for any indirect, incidental, or consequential damages arising from your use of the Site.</p>
+      </section>
+
+      <section aria-labelledby="terms-changes">
+        <h2 id="terms-changes">Changes to These Terms</h2>
+        <p>We may update these Terms from time to time. Continued use of the Site after changes are posted constitutes acceptance of the updated Terms. The date at the top of this page reflects the most recent revision.</p>
+      </section>
+
+      <section aria-labelledby="terms-contact">
+        <h2 id="terms-contact">Contact</h2>
+        <address>
+          <p>{LEGAL.orgName}<br />
+          <a href={`mailto:${LEGAL.email}`}>{LEGAL.email}</a><br />
+          {LEGAL.telephone}</p>
+        </address>
+      </section>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .legal-page { padding-block: var(--space-xl); }
+  .legal-page__header { margin-bottom: var(--space-l); }
+  .legal-page__meta { color: var(--color-text-muted); font-size: 0.875rem; margin-top: 0.5rem; }
+  .legal-page section { margin-bottom: var(--space-l); }
+  .legal-page h2 { margin-bottom: var(--space-xs); }
+  .legal-page p, .legal-page li { max-width: 70ch; line-height: 1.7; }
+  .legal-page ul { padding-left: 1.5rem; display: flex; flex-direction: column; gap: 0.35rem; }
+</style>

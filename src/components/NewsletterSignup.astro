@@ -1,0 +1,60 @@
+---
+/**
+ * NewsletterSignup.astro — HubSpot-connected email signup using the
+ * native form → HubSpot Forms Submission API pattern (no embed widget).
+ * Wraps HubSpotForm with newsletter-specific defaults.
+ *
+ * Usage:
+ *   <NewsletterSignup
+ *     formGuid="your-hubspot-form-guid"
+ *     heading="Stay Connected"
+ *     description="Get impact updates, event news, and ways to help."
+ *   />
+ */
+
+import HubSpotForm from './HubSpotForm.astro';
+
+interface Props {
+  formGuid?: string;
+  heading?: string;
+  description?: string;
+  compact?: boolean;
+}
+const {
+  formGuid = 'REPLACE_WITH_HUBSPOT_FORM_GUID',
+  heading = 'Stay Connected',
+  description = 'Receive impact stories, event updates, and ways you can help. Unsubscribe anytime.',
+  compact = false,
+} = Astro.props;
+---
+
+<section class={`newsletter-signup${compact ? ' newsletter-signup--compact' : ''}`} aria-labelledby="ns-heading">
+  {!compact && (
+    <div class="newsletter-signup__head">
+      <h2 id="ns-heading">{heading}</h2>
+      {description && <p class="prose">{description}</p>}
+    </div>
+  )}
+  <HubSpotForm
+    formGuid={formGuid}
+    heading={compact ? heading : ''}
+    submitLabel="Subscribe"
+    fields={[
+      { name: 'email', label: 'Email address', type: 'email', required: true, autocomplete: 'email' },
+    ]}
+  />
+  <p class="newsletter-signup__legal">
+    We respect your privacy. No spam, ever. See our <a href="/privacy/">Privacy Policy</a>.
+  </p>
+</section>
+
+<style>
+  .newsletter-signup { max-width: 32rem; }
+  .newsletter-signup__head > * + * { margin-top: var(--space-xs); }
+  .newsletter-signup__head { margin-bottom: var(--space-m); }
+  .newsletter-signup__legal {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    margin-top: var(--space-xs);
+  }
+</style>

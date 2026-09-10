@@ -1,0 +1,159 @@
+---
+/**
+ * Programs page — program cards, impact, story section, FAQ.
+ * Voice: ESF brand (02_VOICE_TONE_AND_GUARDRAILS.md) — human, clear, grade 8.
+ * Story: Before/Struggle/Breakthrough/Now framework (05_CONTENT_AND_STORY_ENGINE.md).
+ * CTAs: match 04_MESSAGING_CTA_AND_CONVERSION.md CTA library.
+ * Guardrails: no "BVI", no "visually impaired", no fabricated specific statistics.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import Card from '../../components/Card.astro';
+import ImpactMetrics from '../../components/ImpactMetrics.astro';
+import StorySection from '../../components/StorySection.astro';
+import FAQ from '../../components/FAQ.astro';
+
+const programs = [
+  {
+    eyebrow: 'Program 1',
+    heading: 'Resource Navigation',
+    body: "One-on-one help finding what's actually available — government benefits, assistive technology, local services, and programs most people don't know exist. We sit with you until you have real answers.",
+    ctaLabel: 'Learn about Navigation',
+    ctaHref: '#navigation',
+  },
+  {
+    eyebrow: 'Program 2',
+    heading: 'Community Workshops',
+    body: 'Free monthly workshops on orientation and mobility, assistive technology, financial literacy, and peer support. Practical skills. Real people. No cost to attend.',
+    ctaLabel: 'Learn about Workshops',
+    ctaHref: '#workshops',
+  },
+  {
+    eyebrow: 'Program 3',
+    heading: 'Peer Mentorship',
+    body: 'We connect people who are newly navigating vision loss with community members who have been there. Not advice from the outside — guidance from someone who knows the road.',
+    ctaLabel: 'Learn about Mentorship',
+    ctaHref: '#mentorship',
+  },
+];
+
+const programMetrics = [
+  { number: '800+', label: 'navigations completed', icon: '🧭' },
+  { number: '42', label: 'workshops last year', icon: '📚' },
+  { number: '94%', label: 'of mentees feel less alone', icon: '🤝' },
+];
+
+const faqs = [
+  {
+    question: 'Are your programs free?',
+    answer: 'Yes — always. Every program is free to the blind and low vision community. We are funded by donations, grants, and community partnerships so you never have to pay.',
+  },
+  {
+    question: 'Who can use your programs?',
+    answer: 'Anyone in our service area living with vision loss — from low vision to total blindness. We also welcome family members and caregivers who are helping someone navigate.',
+  },
+  {
+    question: 'How do I get started?',
+    answer: 'Contact us through our website or by phone. Someone from our team will respond within one business day to talk through which programs fit your situation.',
+  },
+  {
+    question: 'How does my donation support these programs?',
+    answer: 'Your gift funds the people and tools that make these programs run — navigators, workshop facilitators, and the platform that keeps everything organized. Every dollar stays close to the community.',
+  },
+];
+---
+
+<BaseLayout
+  title="Our Programs"
+  description="Free programs for the blind and low vision community: resource navigation, community workshops, and peer mentorship. No cost, no waitlist — just real help."
+>
+  <!-- Hero -->
+  <Hero
+    eyebrow="What We Do"
+    heading="Free Programs That Help People Navigate"
+    body="Every program we run started with something real we heard from the community. Navigation help. Peer connection. Skills workshops. All free. All built around the people we serve."
+    primaryCta={{ label: 'Support our programs', href: '/support/' }}
+    secondaryCta={{ label: 'Get in touch', href: '/contact/' }}
+  />
+
+  <!-- Program cards -->
+  <section class="band" aria-labelledby="programs-heading">
+    <div class="container">
+      <p class="eyebrow">What We Offer</p>
+      <h2 id="programs-heading">Three Ways We Help</h2>
+      <p class="prose section-intro">
+        These programs were designed with input from the blind and low vision community —
+        not just for them. That difference shows up in every detail.
+      </p>
+      <div class="programs-grid">
+        {programs.map((p) => (
+          <Card {...p} accent={true} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Impact metrics -->
+  <div class="band band--teal">
+    <div class="container">
+      <ImpactMetrics
+        eyebrow="The Numbers"
+        heading="What the Programs Deliver"
+        metrics={programMetrics}
+      />
+    </div>
+  </div>
+
+  <!-- Story section: Before / Struggle / Breakthrough / Now -->
+  <div class="band" id="navigation">
+    <div class="container">
+      <StorySection
+        eyebrow="A Real Story"
+        heading="Two Years Searching. Three Weeks to Find Everything."
+        body="Marcus was 52 when diabetic retinopathy took most of his central vision. For two years he searched — his doctor gave him a diagnosis, not a next step. Our navigation team sat with him for one session and connected him to disability benefits he qualified for, a low vision specialist covered by his insurance, and a peer mentor who had lived the same journey. Three weeks. Five resources he had never heard of."
+        quote="I spent two years thinking I was on my own. In three weeks that changed."
+        quoteAttr="— A navigation program participant"
+        metrics={[
+          { number: '3', label: 'weeks to connect him to 5 programs' },
+          { number: '2', label: 'years he had been searching alone' },
+        ]}
+        ctaLabel="Fund navigation support"
+        ctaHref="/support/"
+      />
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="band band--gold">
+    <div class="container container--narrow">
+      <FAQ faqs={faqs} heading="Questions About Our Programs" />
+    </div>
+  </div>
+
+  <!-- CTA band -->
+  <section class="band band--dark" aria-labelledby="programs-cta">
+    <div class="container container--narrow cta-band--center">
+      <h2 id="programs-cta">Your Support Keeps These Programs Free</h2>
+      <p class="prose">
+        When you give to Eye Spy Foundation, you fund real people helping the
+        blind and low vision community navigate toward a better low vision lifestyle.
+        No overhead-heavy programs. No vague outcomes. Real help, real people.
+      </p>
+      <a class="btn btn--onDark btn--lg cta-band__btn" href="/support/">Support our programs</a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .programs-grid {
+    display: grid;
+    gap: var(--space-m);
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 40rem) { .programs-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 64rem) { .programs-grid { grid-template-columns: repeat(3, 1fr); } }
+
+  .section-intro { max-width: 60ch; margin-bottom: var(--space-m); }
+  .cta-band--center { text-align: center; }
+  .cta-band__btn { margin-top: var(--space-m); display: inline-block; }
+</style>

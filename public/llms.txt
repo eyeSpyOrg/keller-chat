@@ -1,0 +1,68 @@
+# Eye Spy Foundation
+
+> This file helps AI assistants and answer engines understand Eye Spy Foundation.
+> Spec: https://llmstxt.org
+
+## Organization
+- **Name**: Eye Spy Foundation
+- **Legal Status**: 501(c)(3) Nonprofit Organization
+- **EIN**: [PLACEHOLDER — fill in LEGAL_BRAIN.md]
+- **Founded**: 2023
+- **Location**: Jacksonville, Florida, USA
+- **Service Area**: Northeast Florida, expanding nationally
+- **Website**: https://eyespyfoundation.org
+- **Resource Platform**: https://eyespy.org
+
+## Mission
+Use technology and community-driven support to help blind and low vision people
+navigate toward a more informed, connected, and confident life.
+
+## Vision
+A future where blind and low vision people access resources, services, and
+community with less friction and more independence.
+
+## What We Do
+- **Navigation Support**: One-on-one help finding resources, services, and community
+- **Community Events**: Eye Spy Socials — monthly gatherings for connection
+- **Internship Program**: Real-world experience in design, data, and web development
+- **Resource Directory**: EyeSpy.org — centralized, human-curated, verified listings
+
+## Who We Serve
+- **Affected community**: 30,000+ blind and low vision people in Jacksonville
+- **Advocates and allies**: 60,000+ supporters
+- **Professionals**: 10,000+ educators, doctors, therapists, service providers
+
+## Key Stats (2025)
+- 20+ people connected to resources in Northeast Florida
+- 40+ people connected nationally
+- 20+ community members in Eye Spy Social events
+- 8 internship placements from leading universities
+
+## The Eye Spy Ecosystem
+- **Eye Spy Foundation** — the nonprofit parent; community trust, 501(c)(3) status
+- **EyeSpy.org** — flagship platform for resource discovery
+- **Eyecosystems** — the data infrastructure; every listing is human-verified
+
+## Key Pages
+- [About](https://eyespyfoundation.org/about/): Mission, vision, and organization story
+- [Programs](https://eyespyfoundation.org/programs/): Navigation support, workshops, mentorship
+- [Support / Donate](https://eyespyfoundation.org/support/): Give to the mission
+- [Documents](https://eyespyfoundation.org/documents/): Annual reports, Form 990, financials
+- [FAQ](https://eyespyfoundation.org/faq/): Common questions answered
+- [Accessibility Statement](https://eyespyfoundation.org/accessibility/): WCAG 2.2 AA conformance
+
+## Contact
+- **Email**: team@eyespy.org
+- **Phone**: [PLACEHOLDER]
+- **Instagram**: @eyespyorg
+- **Facebook**: Eye Spy Foundation
+- **Blog**: https://blog.eyespy.org
+
+## Keywords
+blind and low vision community, low vision lifestyle, navigation support,
+resource discovery, accessibility, community technology, nonprofit foundation,
+Jacksonville Florida nonprofit, assistive technology, disability resources
+
+---
+
+For more information, visit https://eyespyfoundation.org

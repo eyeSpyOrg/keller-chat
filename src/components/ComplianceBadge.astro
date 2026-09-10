@@ -1,0 +1,117 @@
+---
+/**
+ * ComplianceBadge.astro — 501(c)(3) status badge with EIN and optional
+ * third-party verification links (Charity Navigator, Candid/GuideStar).
+ *
+ * Usage:
+ *   <ComplianceBadge
+ *     ein="12-3456789"
+ *     charityNavigatorUrl="https://www.charitynavigator.org/ein/123456789"
+ *   />
+ */
+
+import { SITE } from '../config/site.js';
+
+interface Props {
+  ein?: string;
+  charityNavigatorUrl?: string;
+  candidUrl?: string;
+  compact?: boolean;
+}
+const { ein, charityNavigatorUrl, candidUrl, compact = false } = Astro.props;
+const displayEin = ein ?? (SITE as any).ein ?? '';
+---
+
+<section class={`compliance-badge${compact ? ' compliance-badge--compact' : ''}`} aria-label="Nonprofit compliance information">
+  <div class="compliance-badge__status">
+    <span class="compliance-badge__icon" aria-hidden="true">✅</span>
+    <div>
+      <p class="compliance-badge__title">IRS-Recognized 501(c)(3)</p>
+      <p class="compliance-badge__sub">Nonprofit Public Charity</p>
+    </div>
+  </div>
+
+  {displayEin && (
+    <p class="compliance-badge__ein">
+      <span class="compliance-badge__label">EIN:</span>
+      <span>{displayEin}</span>
+    </p>
+  )}
+
+  <p class="compliance-badge__tax">
+    Donations are tax-deductible to the fullest extent permitted by law.
+  </p>
+
+  {(charityNavigatorUrl || candidUrl) && (
+    <div class="compliance-badge__links">
+      {charityNavigatorUrl && (
+        <a
+          href={charityNavigatorUrl}
+          rel="noopener noreferrer"
+          target="_blank"
+          class="compliance-badge__link"
+        >
+          Charity Navigator profile
+          <span class="sr-only">(opens in new tab)</span>
+        </a>
+      )}
+      {candidUrl && (
+        <a
+          href={candidUrl}
+          rel="noopener noreferrer"
+          target="_blank"
+          class="compliance-badge__link"
+        >
+          Candid (GuideStar) profile
+          <span class="sr-only">(opens in new tab)</span>
+        </a>
+      )}
+    </div>
+  )}
+</section>
+
+<style>
+  .compliance-badge {
+    border: 2px solid var(--color-accent);
+    border-radius: var(--radius);
+    padding: var(--space-m);
+    background: var(--color-teal-tint);
+    max-width: 28rem;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+  .compliance-badge--compact { padding: var(--space-s); gap: var(--space-2xs); }
+  .compliance-badge__status { display: flex; align-items: center; gap: 0.75rem; }
+  .compliance-badge__icon { font-size: 1.75rem; line-height: 1; flex-shrink: 0; }
+  .compliance-badge__title { font-weight: 700; margin: 0; font-size: var(--step-0); }
+  .compliance-badge__sub { margin: 0; font-size: 0.875rem; color: var(--color-text-muted); }
+  .compliance-badge__ein {
+    display: flex;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    margin: 0;
+  }
+  .compliance-badge__label { font-weight: 700; color: var(--color-accent); }
+  .compliance-badge__tax {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    margin: 0;
+    font-style: italic;
+  }
+  .compliance-badge__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding-top: var(--space-2xs);
+    border-top: 1px solid var(--color-border);
+    margin-top: var(--space-2xs);
+  }
+  .compliance-badge__link {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-accent);
+    text-decoration: underline;
+  }
+  .compliance-badge__link:hover { color: var(--color-accent-hover); }
+</style>

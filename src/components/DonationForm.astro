@@ -1,0 +1,287 @@
+---
+/**
+ * DonationForm.astro — nonprofit donation UI using Stripe Payment Links.
+ * Never builds a custom card-capture form; all payment handling is
+ * Stripe-hosted (Payment Links). This component handles amount selection,
+ * impact messaging, and GA4 event firing, then redirects to the
+ * appropriate Stripe Payment Link.
+ *
+ * Usage:
+ *   <DonationForm
+ *     amounts={[25, 50, 100, 250]}
+ *     paymentLinks={{
+ *       25:  'https://buy.stripe.com/test_xxx',
+ *       50:  'https://buy.stripe.com/test_yyy',
+ *       100: 'https://buy.stripe.com/test_zzz',
+ *       250: 'https://buy.stripe.com/test_aaa',
+ *       custom: 'https://buy.stripe.com/test_bbb',
+ *     }}
+ *     impactMap={{
+ *       25:  'covers one month of assistive technology support',
+ *       50:  'funds a navigation workshop for two people',
+ *       100: 'runs a free community workshop open to everyone',
+ *       250: 'equips a family for an entire year of support',
+ *     }}
+ *   />
+ */
+
+interface Props {
+  amounts?: number[];
+  paymentLinks?: Record<number | 'custom', string>;
+  impactMap?: Record<number, string>;
+  allowCustom?: boolean;
+  allowRecurring?: boolean;
+  taxMessage?: boolean;
+  heading?: string;
+}
+const {
+  amounts = [25, 50, 100, 250],
+  paymentLinks = {},
+  impactMap = {},
+  allowCustom = true,
+  allowRecurring = true,
+  taxMessage = true,
+  heading = 'Make an Impact Today',
+} = Astro.props;
+const formId = 'donation-form';
+---
+
+<section class="donation-form" aria-labelledby="df-heading">
+  <h2 id="df-heading">{heading}</h2>
+
+  {allowRecurring && (
+    <div class="df-toggle" role="group" aria-label="Donation frequency">
+      <button class="df-toggle__btn df-toggle__btn--active" data-freq="one-time" type="button">One-time</button>
+      <button class="df-toggle__btn" data-freq="monthly" type="button">Monthly</button>
+    </div>
+  )}
+
+  <div class="df-amounts" role="group" aria-label="Select donation amount">
+    {amounts.map((amt) => (
+      <button
+        class="df-amt-btn"
+        data-amount={amt}
+        data-link={paymentLinks[amt] ?? ''}
+        data-impact={impactMap[amt] ?? ''}
+        type="button"
+        aria-pressed="false"
+      >
+        ${amt}
+      </button>
+    ))}
+    {allowCustom && (
+      <button
+        class="df-amt-btn df-amt-btn--custom"
+        data-amount="custom"
+        data-link={paymentLinks['custom'] ?? ''}
+        type="button"
+        aria-pressed="false"
+      >
+        Custom
+      </button>
+    )}
+  </div>
+
+  {allowCustom && (
+    <div class="df-custom-input" hidden id="df-custom-wrap">
+      <label for="df-custom-amount">Enter amount (USD)</label>
+      <div class="df-custom-input__row">
+        <span aria-hidden="true">$</span>
+        <input
+          id="df-custom-amount"
+          type="number"
+          min="1"
+          step="1"
+          placeholder="Enter amount"
+          autocomplete="off"
+        />
+      </div>
+    </div>
+  )}
+
+  <p class="df-impact" id="df-impact-msg" aria-live="polite"></p>
+
+  <a
+    class="btn btn--primary btn--lg df-cta"
+    id="df-cta"
+    href="#"
+    aria-disabled="true"
+  >
+    Donate Now
+  </a>
+
+  {taxMessage && (
+    <p class="df-tax">
+      Donations are tax-deductible to the fullest extent permitted by law.
+      You will receive a receipt via email from Stripe.
+    </p>
+  )}
+</section>
+
+<style>
+  .donation-form {
+    background: var(--color-surface);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-m);
+    max-width: 28rem;
+  }
+  .donation-form h2 { margin: 0 0 var(--space-s); font-size: var(--step-2); }
+
+  .df-toggle {
+    display: flex;
+    gap: 0;
+    border: 2px solid var(--color-accent);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    margin-bottom: var(--space-s);
+    width: fit-content;
+  }
+  .df-toggle__btn {
+    padding: 0.5rem 1.25rem;
+    font-weight: 700;
+    border: 0;
+    background: transparent;
+    color: var(--color-accent);
+    cursor: pointer;
+    min-height: 44px;
+    font-size: 0.9rem;
+  }
+  .df-toggle__btn--active {
+    background: var(--color-accent);
+    color: #fff;
+  }
+  .df-toggle__btn:hover:not(.df-toggle__btn--active) { background: var(--color-teal-tint); }
+
+  .df-amounts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: var(--space-s);
+  }
+  .df-amt-btn {
+    flex: 1 1 calc(50% - 0.25rem);
+    min-height: 44px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: var(--color-bg);
+    color: var(--color-text);
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .df-amt-btn:hover { border-color: var(--color-accent); background: var(--color-teal-tint); }
+  .df-amt-btn[aria-pressed="true"] {
+    border-color: var(--color-accent);
+    background: var(--color-accent);
+    color: #fff;
+  }
+
+  .df-custom-input { margin-bottom: var(--space-s); }
+  .df-custom-input label { display: block; font-weight: 600; margin-bottom: 0.35rem; }
+  .df-custom-input__row {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: 0 0.75rem;
+  }
+  .df-custom-input__row span { font-weight: 700; color: var(--color-text-muted); }
+  .df-custom-input input {
+    border: 0;
+    padding: 0.6rem 0;
+    font-size: 1.1rem;
+    background: transparent;
+    color: var(--color-text);
+    min-height: 44px;
+    width: 100%;
+  }
+  .df-custom-input input:focus { outline: none; }
+  .df-custom-input__row:focus-within {
+    border-color: var(--color-accent);
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  .df-impact {
+    font-style: italic;
+    color: var(--color-text-muted);
+    min-height: 1.5em;
+    margin: 0 0 var(--space-s);
+    font-size: 0.9rem;
+  }
+
+  .df-cta {
+    display: block;
+    text-align: center;
+    width: 100%;
+    margin-bottom: var(--space-s);
+    text-decoration: none;
+  }
+  .df-cta[aria-disabled="true"] {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  .df-tax {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    margin: 0;
+    line-height: 1.5;
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.donation-form').forEach((form) => {
+    const amtBtns = form.querySelectorAll<HTMLButtonElement>('[data-amount]');
+    const cta = form.querySelector<HTMLAnchorElement>('#df-cta')!;
+    const impactMsg = form.querySelector<HTMLElement>('#df-impact-msg')!;
+    const customWrap = form.querySelector<HTMLElement>('#df-custom-wrap');
+    const customInput = form.querySelector<HTMLInputElement>('#df-custom-amount');
+    const freqBtns = form.querySelectorAll<HTMLButtonElement>('[data-freq]');
+    let freq = 'one-time';
+
+    freqBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        freqBtns.forEach((b) => b.classList.remove('df-toggle__btn--active'));
+        btn.classList.add('df-toggle__btn--active');
+        freq = btn.dataset.freq ?? 'one-time';
+      });
+    });
+
+    function selectAmount(btn: HTMLButtonElement) {
+      amtBtns.forEach((b) => b.setAttribute('aria-pressed', 'false'));
+      btn.setAttribute('aria-pressed', 'true');
+      const isCustom = btn.dataset.amount === 'custom';
+      if (customWrap) customWrap.hidden = !isCustom;
+      const link = btn.dataset.link ?? '';
+      const impact = btn.dataset.impact ?? '';
+      impactMsg.textContent = impact ? `Your ${btn.dataset.amount === 'custom' ? '' : '$' + btn.dataset.amount + ' '}gift ${impact}.` : '';
+      if (link) {
+        cta.href = link;
+        cta.removeAttribute('aria-disabled');
+      }
+      if (!isCustom) {
+        (window as any).gtag?.('event', 'donation_click', {
+          amount: Number(btn.dataset.amount),
+          type: freq,
+        });
+      }
+    }
+
+    amtBtns.forEach((btn) => {
+      btn.addEventListener('click', () => selectAmount(btn));
+    });
+
+    customInput?.addEventListener('input', () => {
+      const val = Number(customInput.value);
+      if (val > 0) {
+        const link = form.querySelector<HTMLButtonElement>('[data-amount="custom"]')?.dataset.link ?? '';
+        if (link) { cta.href = link; cta.removeAttribute('aria-disabled'); }
+        (window as any).gtag?.('event', 'donation_click', { amount: val, type: freq });
+      }
+    });
+  });
+</script>

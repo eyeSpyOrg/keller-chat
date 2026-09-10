@@ -1,0 +1,84 @@
+---
+/**
+ * DonorStory.astro — impact story card pairing an image with a quote,
+ * donor name, and optional call-to-action to donate.
+ *
+ * Usage:
+ *   <DonorStory
+ *     imageSrc="/images/sarah.jpg"
+ *     imageAlt="Sarah smiling with her guide dog"
+ *     quote="Thanks to ESF, I found resources I didn't know existed..."
+ *     name="Sarah M."
+ *     attribution="Program participant, 2024"
+ *     ctaLabel="Support people like Sarah"
+ *     ctaHref="/support/"
+ *   />
+ */
+
+interface Props {
+  imageSrc?: string;
+  imageAlt?: string;
+  quote: string;
+  name: string;
+  attribution?: string;
+  ctaLabel?: string;
+  ctaHref?: string;
+}
+const { imageSrc, imageAlt = '', quote, name, attribution, ctaLabel, ctaHref } = Astro.props;
+---
+
+<article class="donor-story">
+  {imageSrc && (
+    <div class="donor-story__img-wrap">
+      <img
+        src={imageSrc}
+        alt={imageAlt}
+        width="640"
+        height="360"
+        loading="lazy"
+        decoding="async"
+        class="donor-story__img"
+      />
+    </div>
+  )}
+  <blockquote class="donor-story__body">
+    <p class="donor-story__quote">&ldquo;{quote}&rdquo;</p>
+    <footer class="donor-story__attribution">
+      <cite>
+        <span class="donor-story__name">{name}</span>
+        {attribution && <span class="donor-story__role">{attribution}</span>}
+      </cite>
+    </footer>
+  </blockquote>
+  {ctaLabel && ctaHref && (
+    <p class="donor-story__cta">
+      <a class="btn btn--primary" href={ctaHref}>{ctaLabel}</a>
+    </p>
+  )}
+</article>
+
+<style>
+  .donor-story {
+    background: var(--color-surface);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-sm);
+  }
+  .donor-story__img-wrap { aspect-ratio: 16 / 9; overflow: hidden; }
+  .donor-story__img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .donor-story__body { margin: 0; padding: var(--space-m); }
+  .donor-story__quote {
+    font-size: var(--step-1);
+    font-style: italic;
+    color: var(--color-text);
+    margin: 0 0 var(--space-s);
+    line-height: 1.6;
+  }
+  .donor-story__attribution { display: flex; flex-direction: column; gap: 0.2rem; }
+  .donor-story__name { font-weight: 700; font-style: normal; display: block; }
+  .donor-story__role { font-size: 0.875rem; color: var(--color-text-muted); font-style: normal; }
+  .donor-story__cta { margin: 0; padding: 0 var(--space-m) var(--space-m); }
+</style>

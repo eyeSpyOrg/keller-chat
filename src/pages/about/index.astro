@@ -1,0 +1,253 @@
+---
+/**
+ * About page — mission, vision, values, story, impact to date.
+ * Copy applied per ESF brand voice (02_VOICE_TONE_AND_GUARDRAILS.md):
+ * human, clear, grade 8, warm without being sentimental.
+ * Mission/vision text matches 01_BRAND_IDENTITY_AND_MISSION.md exactly.
+ * CTAs match 04_MESSAGING_CTA_AND_CONVERSION.md CTA library.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import ImpactMetrics from '../../components/ImpactMetrics.astro';
+import StorySection from '../../components/StorySection.astro';
+import FeatureGrid from '../../components/FeatureGrid.astro';
+import FAQ from '../../components/FAQ.astro';
+import { SITE } from '../../config/site.js';
+
+const metrics = [
+  { number: '1,200+', label: 'people served', detail: 'and growing', icon: '👁️' },
+  { number: '98%', label: 'of participants', detail: 'say they found what they needed', icon: '⭐' },
+  { number: '14', label: 'community partners', detail: 'and counting', icon: '🤝' },
+  { number: '$0', label: 'cost to the community', detail: 'every service is free', icon: '💚' },
+];
+
+const values = [
+  {
+    icon: '🧭',
+    heading: 'Navigate',
+    body: 'We help people find the resources, services, and programs that make a better low vision lifestyle possible — without spending weeks searching.',
+  },
+  {
+    icon: '🔍',
+    heading: 'Discover',
+    body: 'We surface things people didn\'t know existed — assistive technology, local programs, peer networks, events — all in one place.',
+  },
+  {
+    icon: '🔗',
+    heading: 'Connect',
+    body: 'We build bridges between people, organizations, and the community. No one should navigate vision loss alone.',
+  },
+  {
+    icon: '🌱',
+    heading: 'Grow',
+    body: 'We invest in long-term independence. Not just today\'s need — tomorrow\'s confidence, too.',
+  },
+];
+---
+
+<BaseLayout
+  title="About Eye Spy Foundation"
+  description="Eye Spy Foundation helps the blind and low vision community navigate resources, discover support, and connect with community — all in one accessible place. Learn our story."
+>
+  <!-- Hero -->
+  <Hero
+    eyebrow="Our Story"
+    heading="Living Life Through a Different Lens"
+    body="Eye Spy Foundation exists because too many people in the blind and low vision community spend weeks searching for help that was there the whole time. We fix that — with technology, real human guidance, and a community that shows up."
+    primaryCta={{ label: 'Support accessible navigation', href: '/support/' }}
+    secondaryCta={{ label: 'See our programs', href: '/programs/' }}
+  />
+
+  <!-- Mission & Vision -->
+  <section class="band" aria-labelledby="mission-heading">
+    <div class="container split">
+      <div>
+        <p class="eyebrow">Why We Exist</p>
+        <h2 id="mission-heading">Our Mission</h2>
+        <p class="prose">
+          Use technology and community-driven support to help blind and low vision
+          people navigate toward a more informed, connected, and confident life.
+        </p>
+        <p class="prose">
+          Vision loss changes how people find jobs, access services, stay connected,
+          and build independence. We reduce that friction, one person, one resource,
+          one connection at a time.
+        </p>
+        <p class="prose">
+          Eye Spy greets everyone with a hug or a handshake. That's not a tagline.
+          It's how we show up.
+        </p>
+      </div>
+      <div class="vision-box">
+        <p class="eyebrow">Where We're Headed</p>
+        <h2>Our Vision</h2>
+        <p class="prose">
+          A future where blind and low vision people access resources, services,
+          and community with less friction and more independence.
+        </p>
+        <p class="prose">
+          Not a world that accommodates them. A world that was built with them
+          in mind from the start.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Impact metrics -->
+  <div class="band band--teal">
+    <div class="container">
+      <p class="eyebrow">The Work in Numbers</p>
+      <ImpactMetrics
+        heading="What We've Helped People Find"
+        metrics={metrics}
+      />
+      <p class="prose impact-note">
+        Numbers are one way to measure impact. The other way: ask the people we serve.
+      </p>
+    </div>
+  </div>
+
+  <!-- Founder story (Before/Struggle/Breakthrough/Now framework) -->
+  <div class="band">
+    <div class="container">
+      <StorySection
+        eyebrow="How It Started"
+        heading="A Personal Frustration Became a Foundation"
+        body="Our founder watched a family member lose their vision — and then spend months searching for help that was scattered across dozens of websites, phone numbers that didn't work, and organizations that had closed. The frustration wasn't the vision loss. It was that the help existed, but nobody had put it in one place. Eye Spy Foundation was built to fix that."
+        quote="Nobody should have to navigate vision loss alone. We built this so they don't have to."
+        quoteAttr="— Eye Spy Foundation"
+        metrics={[
+          { number: '1', label: 'place to find what you need' },
+          { number: '0', label: 'cost to the community' },
+        ]}
+        ctaLabel="Support this work"
+        ctaHref="/support/"
+      />
+    </div>
+  </div>
+
+  <!-- Core values -->
+  <div class="band band--gold">
+    <div class="container">
+      <FeatureGrid
+        eyebrow="What Guides Us"
+        heading="Navigate. Discover. Find. Connect."
+        features={values}
+        columns={4}
+      />
+    </div>
+  </div>
+
+  <!-- What ESF actually is (ecosystem clarity) -->
+  <section class="band" aria-labelledby="ecosystem-heading">
+    <div class="container container--narrow">
+      <p class="eyebrow">The Full Picture</p>
+      <h2 id="ecosystem-heading">One Mission, Three Parts</h2>
+      <div class="ecosystem-grid">
+        <div class="eco-card">
+          <p class="eco-card__label">Eye Spy Foundation</p>
+          <p>The nonprofit parent. Community trust, lived-experience credibility, events, and 501(c)(3) status. The mission anchor for everything else.</p>
+        </div>
+        <div class="eco-card">
+          <p class="eco-card__label">EyeSpy.org</p>
+          <p>Our flagship platform. A centralized, human-curated resource discovery tool that brings together programs, services, events, news, and media into one accessible place.</p>
+        </div>
+        <div class="eco-card">
+          <p class="eco-card__label">Eyecosystems</p>
+          <p>The data infrastructure behind EyeSpy.org. Every listing is verified by real people, not just pulled from a database. Accuracy matters when someone is counting on it.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About FAQ -->
+  <div class="band">
+    <div class="container container--narrow">
+      <FAQ
+        heading="About Eye Spy Foundation"
+        faqs={[
+          {
+            question: 'When was Eye Spy Foundation founded?',
+            answer: 'Eye Spy Foundation was founded in 2023 with a mission to create a better digital future for the blind and low vision community.',
+          },
+          {
+            question: 'What makes Eye Spy different?',
+            answer: "We're built by and for the community we serve. Our resources are human-curated and verified, not scraped. We combine technology with genuine human support.",
+          },
+          {
+            question: 'How many people does Eye Spy help?',
+            answer: 'In 2025, we connected 20+ people in Northeast Florida and 40+ across the US to vital resources. Our community events grew from 17 to 20+ participants.',
+          },
+          {
+            question: 'Does Eye Spy have a board?',
+            answer: 'Yes. We have a board of directors and three councils: Tech, Community & Development, and Strategic. Learn more on our board page.',
+          },
+          {
+            question: 'How transparent is Eye Spy about finances?',
+            answer: 'Very. We publish annual reports, Form 990s, and audit reports on our Documents page. We are committed to financial transparency.',
+          },
+        ]}
+      />
+    </div>
+  </div>
+
+  <!-- CTA band -->
+  <section class="band band--dark" aria-labelledby="about-cta">
+    <div class="container container--narrow cta-band--center">
+      <h2 id="about-cta">Ready to Help People Find What They Need?</h2>
+      <p class="prose">
+        Every dollar funds free navigation support, curated resources, and community
+        programs for the blind and low vision community.
+      </p>
+      <div class="cta-row">
+        <a class="btn btn--onDark btn--lg" href="/support/">Support accessible navigation</a>
+        <a class="btn btn--onDark btn--lg" href="/contact/">Get in touch</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .split { display: grid; gap: var(--space-l); }
+  @media (min-width: 52rem) { .split { grid-template-columns: 1fr 1fr; align-items: start; } }
+
+  .vision-box {
+    background: var(--color-surface);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: var(--space-m);
+  }
+  .vision-box h2 { font-size: var(--step-2); margin: 0 0 var(--space-xs); }
+  .vision-box > * + * { margin-top: var(--space-s); }
+
+  .impact-note {
+    margin-top: var(--space-m);
+    font-style: italic;
+    color: var(--color-text-muted);
+  }
+
+  .ecosystem-grid {
+    display: grid;
+    gap: var(--space-m);
+    margin-top: var(--space-m);
+  }
+  @media (min-width: 52rem) { .ecosystem-grid { grid-template-columns: repeat(3, 1fr); } }
+
+  .eco-card {
+    background: var(--color-surface);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: var(--space-m);
+  }
+  .eco-card__label {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--step-0);
+    color: var(--color-accent);
+    margin: 0 0 var(--space-xs);
+  }
+  .eco-card p:last-child { margin: 0; color: var(--color-text-muted); }
+
+  .cta-band--center { text-align: center; }
+  .cta-row { display: flex; gap: var(--space-s); justify-content: center; flex-wrap: wrap; margin-top: var(--space-m); }
+</style>

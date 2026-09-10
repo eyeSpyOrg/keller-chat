@@ -1,0 +1,33 @@
+# Quality gate: every push and PR must pass the accessibility and
+# Lighthouse budgets before merge. This is what makes the foundation
+# "bulletproof" — regressions cannot ship silently.
+name: Quality gate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  a11y-and-lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+
+      - name: HTML + WCAG markup validation
+        run: npx html-validate "dist/**/*.html"
+
+      - name: Pa11y (axe + HTML_CS, WCAG 2 AA)
+        run: |
+          npx astro preview --port 4321 &
+          sleep 4
+          npx pa11y-ci --config tests/pa11yci.json
+
+      - name: Lighthouse CI (a11y ≥95, SEO ≥90, best practices ≥90)
+        run: npx lhci autorun --config=tests/lighthouserc.json
