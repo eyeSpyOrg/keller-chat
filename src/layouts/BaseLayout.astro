@@ -54,7 +54,7 @@ const { title, description, image, type, noindex, chatMode } = Astro.props;
     <OrganizationSchema />
     <Analytics />
 
-    <!-- Apply saved accessibility preferences before first paint -->
+    <!-- Apply saved accessibility preferences + theme before first paint -->
     <script is:inline>
       (function () {
         try {
@@ -62,6 +62,8 @@ const { title, description, image, type, noindex, chatMode } = Astro.props;
             var v = localStorage.getItem('a11y-pref-' + k);
             if (v) document.documentElement.setAttribute('data-a11y-' + k, v);
           });
+          var t = localStorage.getItem('kc-theme');
+          if (t) document.documentElement.setAttribute('data-theme', t);
         } catch (e) {}
       })();
     </script>

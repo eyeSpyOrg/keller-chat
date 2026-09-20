@@ -1,0 +1,828 @@
+---
+/**
+ * KellerChat Navigator Dashboard
+ * Pending connections + HubSpot CRM activity section.
+ * chatMode hides site Header/Footer; dashboard provides its own chrome.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Dashboard"
+  description="Navigator dashboard — manage connections and review CRM activity for Eye Spy Foundation's KellerChat network."
+  chatMode={true}
+>
+  <div id="dash-shell">
+
+    <!-- Dashboard app header -->
+    <header id="dash-header" role="banner">
+      <a href="/" class="dash-back" aria-label="Back to chat">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        Chat
+      </a>
+
+      <h1 class="dash-title">Dashboard</h1>
+
+      <a href="/login/" class="dash-auth-btn" aria-label="Log out of KellerChat">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+        Log out
+      </a>
+    </header>
+
+    <div id="dash-content">
+
+      <!-- ── Connections ─────────────────────────────────────── -->
+      <section class="dash-section" aria-labelledby="connections-heading">
+        <div class="dash-section-header">
+          <h2 id="connections-heading" class="dash-section-title">
+            Connections
+            <span class="dash-badge" aria-label="2 pending">2</span>
+          </h2>
+        </div>
+
+        <ul class="conn-list" role="list">
+
+          <li class="conn-item">
+            <div class="conn-avatar" aria-hidden="true">MR</div>
+            <div class="conn-info">
+              <div class="conn-name">Maria R.</div>
+              <div class="conn-role">Navigator — UF Health Jacksonville</div>
+              <div class="conn-meta">Referred 2 min ago</div>
+            </div>
+            <div class="conn-actions">
+              <button class="conn-btn accept" data-name="Maria R." aria-label="Accept connection from Maria R.">Accept</button>
+              <button class="conn-btn decline" aria-label="Decline connection from Maria R.">Decline</button>
+              <button class="conn-btn transfer" data-name="Maria R." aria-label="Transfer lead from Maria R. to another navigator" aria-haspopup="dialog">Transfer</button>
+            </div>
+          </li>
+
+          <li class="conn-item">
+            <div class="conn-avatar" aria-hidden="true">JT</div>
+            <div class="conn-info">
+              <div class="conn-name">James T.</div>
+              <div class="conn-role">Patient — Arlington Low Vision</div>
+              <div class="conn-meta">Referred 8 min ago</div>
+            </div>
+            <div class="conn-actions">
+              <button class="conn-btn accept" data-name="James T." aria-label="Accept connection from James T.">Accept</button>
+              <button class="conn-btn decline" aria-label="Decline connection from James T.">Decline</button>
+              <button class="conn-btn transfer" data-name="James T." aria-label="Transfer lead from James T. to another navigator" aria-haspopup="dialog">Transfer</button>
+            </div>
+          </li>
+
+        </ul>
+      </section>
+
+      <!-- ── Reminders ──────────────────────────────────────── -->
+      <section class="dash-section reminders-section" aria-labelledby="reminders-heading">
+        <div class="dash-section-header">
+          <h2 id="reminders-heading" class="dash-section-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            Reminders
+            <span class="dash-badge dash-badge--warn" aria-label="3 reminders">3</span>
+          </h2>
+          <button class="remind-add-btn" aria-label="Add a reminder">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add
+          </button>
+        </div>
+
+        <ul class="remind-list" role="list">
+
+          <li class="remind-item remind-item--urgent">
+            <div class="remind-indicator" aria-hidden="true"></div>
+            <div class="remind-body">
+              <div class="remind-text">Follow up with <strong>Maria R.</strong> — O&amp;M referral confirmation due</div>
+              <div class="remind-meta">Today · 11:00 AM</div>
+            </div>
+            <button class="remind-done" aria-label="Mark reminder as done: Follow up with Maria R.">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            </button>
+          </li>
+
+          <li class="remind-item">
+            <div class="remind-indicator" aria-hidden="true"></div>
+            <div class="remind-body">
+              <div class="remind-text">Schedule three-way call with <strong>James T.</strong> and Brooks Rehabilitation</div>
+              <div class="remind-meta">Today · 2:00 PM</div>
+            </div>
+            <button class="remind-done" aria-label="Mark reminder as done: Schedule three-way call with James T.">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            </button>
+          </li>
+
+          <li class="remind-item">
+            <div class="remind-indicator" aria-hidden="true"></div>
+            <div class="remind-body">
+              <div class="remind-text">Send <strong>Sofia K.</strong> assistive technology resource list</div>
+              <div class="remind-meta">Tomorrow · 9:00 AM</div>
+            </div>
+            <button class="remind-done" aria-label="Mark reminder as done: Send Sofia K. resource list">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            </button>
+          </li>
+
+        </ul>
+      </section>
+
+      <!-- ── Activity Section ───────────────────────────────── -->
+      <section class="dash-section" aria-labelledby="activity-heading">
+        <div class="dash-section-header">
+          <h2 id="activity-heading" class="dash-section-title">Activity</h2>
+
+          <!-- Filter tabs -->
+          <div class="act-tabs" role="group" aria-label="Filter activity">
+            <button class="act-tab active" data-filter="all" aria-pressed="true">All</button>
+            <button class="act-tab" data-filter="call" aria-pressed="false">Calls</button>
+            <button class="act-tab" data-filter="email" aria-pressed="false">Emails</button>
+            <button class="act-tab" data-filter="crm" aria-pressed="false">CRM</button>
+          </div>
+        </div>
+
+        <ol class="act-list" role="list" aria-label="Activity feed">
+
+          <li class="act-item" data-type="call">
+            <div class="act-icon act-icon--call" aria-hidden="true">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72c.12.96.36 1.9.72 2.81a2 2 0 0 1-.45 2.11L7.91 8.82a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.1-.45c.9.36 1.85.6 2.81.72A2 2 0 0 1 22 16.92z"/></svg>
+            </div>
+            <div class="act-body">
+              <div class="act-headline"><strong>Maria R.</strong> — Outbound call</div>
+              <div class="act-detail">Duration: 4 min 32 sec · Discussed O&amp;M referral to Brooks Rehabilitation</div>
+            </div>
+            <time class="act-time" datetime="2026-09-20T09:04">9:04 AM</time>
+          </li>
+
+          <li class="act-item" data-type="crm">
+            <div class="act-icon act-icon--crm" aria-hidden="true">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8l4 4-4 4M3 12h18"/></svg>
+            </div>
+            <div class="act-body">
+              <div class="act-headline"><strong>James T.</strong> — Swim lane moved</div>
+              <div class="act-detail">
+                <span class="crm-stage from">New Lead</span>
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                <span class="crm-stage to">Contacted</span>
+              </div>
+            </div>
+            <time class="act-time" datetime="2026-09-20T08:58">8:58 AM</time>
+          </li>
+
+          <li class="act-item" data-type="email">
+            <div class="act-icon act-icon--email" aria-hidden="true">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </div>
+            <div class="act-body">
+              <div class="act-headline"><strong>Sofia K.</strong> — Email sent</div>
+              <div class="act-detail">Follow-up on low-vision assistive technology resources</div>
+            </div>
+            <time class="act-time" datetime="2026-09-20T08:45">8:45 AM</time>
+          </li>
+
+          <li class="act-item" data-type="crm">
+            <div class="act-icon act-icon--crm" aria-hidden="true">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8l4 4-4 4M3 12h18"/></svg>
+            </div>
+            <div class="act-body">
+              <div class="act-headline"><strong>David M.</strong> — Swim lane moved</div>
+              <div class="act-detail">
+                <span class="crm-stage from">Contacted</span>
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                <span class="crm-stage to">Qualified</span>
+              </div>
+            </div>
+            <time class="act-time" datetime="2026-09-20T08:30">8:30 AM</time>
+          </li>
+
+          <li class="act-item" data-type="call">
+            <div class="act-icon act-icon--call" aria-hidden="true">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72c.12.96.36 1.9.72 2.81a2 2 0 0 1-.45 2.11L7.91 8.82a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.1-.45c.9.36 1.85.6 2.81.72A2 2 0 0 1 22 16.92z"/></svg>
+            </div>
+            <div class="act-body">
+              <div class="act-headline"><strong>Anya V.</strong> — Inbound call</div>
+              <div class="act-detail">Duration: 2 min 10 sec · Navigator inquiry about patient referral process</div>
+            </div>
+            <time class="act-time" datetime="2026-09-20T08:15">8:15 AM</time>
+          </li>
+
+          <li class="act-item" data-type="email">
+            <div class="act-icon act-icon--email" aria-hidden="true">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </div>
+            <div class="act-body">
+              <div class="act-headline"><strong>Maria R.</strong> — Email received</div>
+              <div class="act-detail">Patient discharge summary forwarded from UF Health Jacksonville</div>
+            </div>
+            <time class="act-time" datetime="2026-09-20T07:52">7:52 AM</time>
+          </li>
+
+          <li class="act-item" data-type="crm">
+            <div class="act-icon act-icon--crm" aria-hidden="true">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8l4 4-4 4M3 12h18"/></svg>
+            </div>
+            <div class="act-body">
+              <div class="act-headline"><strong>Sofia K.</strong> — Swim lane moved</div>
+              <div class="act-detail">
+                <span class="crm-stage from">Qualified</span>
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                <span class="crm-stage to">Services Active</span>
+              </div>
+            </div>
+            <time class="act-time" datetime="2026-09-19T16:30">Yesterday</time>
+          </li>
+
+        </ol>
+      </section>
+
+    </div><!-- /#dash-content -->
+
+    <!-- Live region for announcements -->
+    <div id="sr-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+
+  </div><!-- /#dash-shell -->
+
+  <!-- Transfer lead modal -->
+  <div id="transfer-modal" role="dialog" aria-modal="true" aria-labelledby="transfer-title" hidden>
+    <div class="transfer-card">
+      <div class="transfer-hdr">
+        <h2 id="transfer-title" class="transfer-title-text">Transfer Lead</h2>
+        <button class="transfer-close" id="transfer-close" aria-label="Close transfer dialog">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <p class="transfer-lead-name">Transferring: <strong id="transfer-lead-display">—</strong></p>
+      <div class="transfer-form">
+        <label for="transfer-select" class="transfer-label">Select navigator</label>
+        <select id="transfer-select" class="transfer-select">
+          <option value="">— Choose a navigator —</option>
+          <option value="sofia-k">Sofia K. — Arlington Low Vision</option>
+          <option value="david-m">David M. — Eye Spy HQ</option>
+          <option value="anya-v">Anya V. — UF Health Jacksonville</option>
+          <option value="leo-p">Leo P. — Brooks Rehabilitation</option>
+        </select>
+        <label for="transfer-note" class="transfer-label">Note <span class="transfer-opt">(optional)</span></label>
+        <textarea id="transfer-note" class="transfer-textarea" rows="3" placeholder="Context for the receiving navigator…"></textarea>
+      </div>
+      <div class="transfer-actions">
+        <button id="transfer-confirm" class="transfer-action transfer-action--confirm" disabled>Transfer Lead</button>
+        <button id="transfer-cancel"  class="transfer-action transfer-action--cancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+/* ── Hide site chrome ───────────────────────────────────────── */
+:global(body) { background: var(--kc-bg, #09101F) !important; font-family: 'Open Sans', system-ui, sans-serif !important; }
+:global(body > .site-header),
+:global(body > .site-footer) { display: none !important; }
+:global(#main-content) { padding: 0 !important; }
+
+/* ── KellerChat token system (same as chat page) ────────────── */
+:root {
+  --kc-bg:          #09101F;
+  --kc-surface:     #101825;
+  --kc-surface-2:   #192236;
+  --kc-surface-3:   #1E2D48;
+  --kc-border:      #1E2D48;
+  --kc-accent:      #5E7AC3;
+  --kc-accent-dim:  rgba(94,122,195,.15);
+  --kc-orange:      #F37121;
+  --kc-burnt:       #933001;
+  --kc-text-1:      #EDF1FF;
+  --kc-text-2:      #7A95C4;
+  --kc-text-3:      #3F5880;
+  --kc-success:     #3FD278;
+  --kc-warning:     #F5BC4B;
+  --kc-danger:      #F56B6B;
+  --kc-font-display: 'Poppins', system-ui, sans-serif;
+  --kc-radius:      10px;
+  --kc-radius-lg:   16px;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --kc-bg:        #F0F4F8; --kc-surface:  #FFFFFF;
+    --kc-surface-2: #EEF1F7; --kc-surface-3: #E2E8F2;
+    --kc-border:    #C8D4E8; --kc-accent:   #3F5DAA;
+    --kc-accent-dim: rgba(63,93,170,.10);
+    --kc-text-1:    #0A1830; --kc-text-2:   #3A5070; --kc-text-3: #7A9ABE;
+  }
+}
+:root[data-theme="light"] {
+  --kc-bg:        #F0F4F8; --kc-surface:  #FFFFFF;
+  --kc-surface-2: #EEF1F7; --kc-surface-3: #E2E8F2;
+  --kc-border:    #C8D4E8; --kc-accent:   #3F5DAA;
+  --kc-accent-dim: rgba(63,93,170,.10);
+  --kc-text-1:    #0A1830; --kc-text-2:   #3A5070; --kc-text-3: #7A9ABE;
+}
+
+/* ── Shell ──────────────────────────────────────────────────── */
+#dash-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100dvh - var(--a11y-bar-h, 44px));
+  background: var(--kc-bg);
+  color: var(--kc-text-1);
+}
+
+/* ── App header ─────────────────────────────────────────────── */
+#dash-header {
+  height: 64px;
+  background: var(--kc-surface);
+  border-bottom: 1px solid var(--kc-border);
+  display: flex;
+  align-items: center;
+  padding-inline: 20px;
+  gap: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  flex-shrink: 0;
+}
+.dash-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--kc-accent);
+  text-decoration: none;
+  font-family: var(--kc-font-display);
+  font-size: .875rem;
+  font-weight: 600;
+  padding: 6px 10px;
+  border-radius: 8px;
+  transition: background .12s;
+  flex-shrink: 0;
+}
+.dash-back:hover { background: var(--kc-accent-dim); }
+.dash-back:focus-visible { outline: 3px solid var(--kc-accent); outline-offset: 2px; }
+.dash-title {
+  flex: 1;
+  font-family: var(--kc-font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0;
+  text-align: center;
+  color: var(--kc-text-1);
+}
+.dash-auth-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--kc-text-2);
+  text-decoration: none;
+  font-family: var(--kc-font-display);
+  font-size: .875rem;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--kc-border);
+  transition: background .12s, color .12s;
+  flex-shrink: 0;
+}
+.dash-auth-btn:hover { background: var(--kc-surface-2); color: var(--kc-text-1); }
+.dash-auth-btn:focus-visible { outline: 3px solid var(--kc-accent); outline-offset: 2px; }
+
+/* ── Content area ───────────────────────────────────────────── */
+#dash-content {
+  flex: 1;
+  padding: 20px 20px 40px;
+  max-width: 760px;
+  width: 100%;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* ── Section wrapper ────────────────────────────────────────── */
+.dash-section {
+  background: var(--kc-surface);
+  border: 1px solid var(--kc-border);
+  border-radius: var(--kc-radius-lg);
+  overflow: hidden;
+}
+.dash-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px 14px;
+  border-bottom: 1px solid var(--kc-border);
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.dash-section-title {
+  font-family: var(--kc-font-display);
+  font-size: .9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--kc-text-3);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.dash-badge {
+  display: inline-grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding-inline: 5px;
+  background: var(--kc-danger);
+  color: #fff;
+  font-size: .65rem;
+  font-weight: 700;
+  border-radius: 999px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Connections list ───────────────────────────────────────── */
+.conn-list { display: flex; flex-direction: column; gap: 0; list-style: none; }
+.conn-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--kc-border);
+}
+.conn-item:last-child { border-bottom: none; }
+.conn-avatar {
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  background: var(--kc-accent-dim);
+  border: 2px solid var(--kc-accent);
+  display: grid;
+  place-items: center;
+  font-family: var(--kc-font-display);
+  font-weight: 700;
+  font-size: .875rem;
+  color: var(--kc-accent);
+  flex-shrink: 0;
+}
+.conn-info { flex: 1; min-width: 0; }
+.conn-name { font-size: .9375rem; font-weight: 700; color: var(--kc-text-1); }
+.conn-role { font-size: .8rem; color: var(--kc-text-2); margin-top: 1px; }
+.conn-meta { font-size: .75rem; color: var(--kc-text-3); margin-top: 2px; }
+.conn-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.conn-btn {
+  height: 36px;
+  padding-inline: 14px;
+  border-radius: 8px;
+  border: none;
+  font-family: var(--kc-font-display);
+  font-size: .8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity .15s;
+  min-width: 72px;
+}
+.conn-btn:focus-visible { outline: 3px solid var(--kc-accent); outline-offset: 2px; }
+.conn-btn.accept   { background: var(--kc-success); color: #000; }
+.conn-btn.decline  { background: var(--kc-surface-3); color: var(--kc-text-2); }
+.conn-btn.transfer { background: rgba(243,113,33,.15); color: var(--kc-orange); border: 1px solid rgba(243,113,33,.35); }
+.conn-btn.transfer:hover { background: rgba(243,113,33,.25); }
+.conn-btn:hover    { opacity: .85; }
+.conn-btn.transfer:hover { opacity: 1; }
+
+/* ── Transfer modal ─────────────────────────────────────────── */
+#transfer-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(9,16,31,.75);
+  backdrop-filter: blur(4px);
+}
+#transfer-modal[hidden] { display: none !important; }
+.transfer-card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--kc-surface);
+  border: 1px solid var(--kc-border);
+  border-radius: var(--kc-radius-lg);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.transfer-hdr { display: flex; align-items: center; justify-content: space-between; }
+.transfer-title-text { font-family: var(--kc-font-display); font-size: 1.05rem; font-weight: 700; color: var(--kc-text-1); margin: 0; }
+.transfer-close {
+  width: 32px; height: 32px; display: grid; place-items: center;
+  background: transparent; border: none; color: var(--kc-text-2);
+  cursor: pointer; border-radius: 6px; transition: background .12s;
+}
+.transfer-close:hover { background: var(--kc-surface-2); }
+.transfer-close:focus-visible { outline: 3px solid var(--kc-accent); outline-offset: 2px; }
+.transfer-lead-name { font-size: .875rem; color: var(--kc-text-2); margin: 0; }
+.transfer-lead-name strong { color: var(--kc-orange); }
+.transfer-form { display: flex; flex-direction: column; gap: 10px; }
+.transfer-label { font-size: .8rem; font-weight: 600; color: var(--kc-text-2); }
+.transfer-opt { font-weight: 400; opacity: .7; }
+.transfer-select,
+.transfer-textarea {
+  background: var(--kc-surface-2); border: 1px solid var(--kc-border);
+  border-radius: var(--kc-radius); color: var(--kc-text-1);
+  font-family: 'Open Sans', system-ui, sans-serif; font-size: .9rem;
+  padding: 10px 12px; width: 100%; transition: border-color .15s;
+}
+.transfer-select:focus, .transfer-textarea:focus { outline: none; border-color: var(--kc-accent); }
+.transfer-textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
+.transfer-actions { display: flex; gap: 8px; }
+.transfer-action {
+  flex: 1; height: 44px; border-radius: var(--kc-radius); border: none;
+  font-family: var(--kc-font-display); font-size: .875rem; font-weight: 700;
+  cursor: pointer; transition: opacity .15s;
+}
+.transfer-action:focus-visible { outline: 3px solid var(--kc-accent); outline-offset: 2px; }
+.transfer-action--confirm { background: var(--kc-burnt); color: #fff; }
+.transfer-action--confirm:disabled { opacity: .4; cursor: not-allowed; }
+.transfer-action--cancel { background: var(--kc-surface-3); color: var(--kc-text-2); }
+.transfer-action:not(:disabled):hover { opacity: .88; }
+
+/* ── Reminders ──────────────────────────────────────────────── */
+.dash-badge--warn { background: var(--kc-warning); color: #000; }
+
+.remind-add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 30px;
+  padding-inline: 10px;
+  border-radius: 6px;
+  border: 1px solid var(--kc-border);
+  background: transparent;
+  color: var(--kc-text-2);
+  font-family: var(--kc-font-display);
+  font-size: .8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .12s, color .12s;
+}
+.remind-add-btn:hover { background: var(--kc-surface-2); color: var(--kc-text-1); }
+.remind-add-btn:focus-visible { outline: 3px solid var(--kc-accent); outline-offset: 2px; }
+
+.remind-list { display: flex; flex-direction: column; list-style: none; }
+.remind-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--kc-border);
+  transition: background .1s;
+}
+.remind-item:last-child { border-bottom: none; }
+.remind-item:hover { background: var(--kc-surface-2); }
+.remind-item.done { opacity: .45; }
+.remind-item.done .remind-text { text-decoration: line-through; }
+
+.remind-indicator {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--kc-accent);
+  flex-shrink: 0;
+}
+.remind-item--urgent .remind-indicator { background: var(--kc-warning); }
+.remind-item.done    .remind-indicator { background: var(--kc-text-3); }
+
+.remind-body { flex: 1; min-width: 0; }
+.remind-text { font-size: .875rem; color: var(--kc-text-1); line-height: 1.4; }
+.remind-meta { font-size: .75rem; color: var(--kc-text-3); margin-top: 2px; }
+.remind-item--urgent .remind-meta { color: var(--kc-warning); }
+
+.remind-done {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--kc-border);
+  background: transparent;
+  color: var(--kc-text-3);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background .12s, border-color .12s, color .12s;
+}
+.remind-done:hover { background: rgba(63,210,120,.12); border-color: var(--kc-success); color: var(--kc-success); }
+.remind-done:focus-visible { outline: 3px solid var(--kc-accent); outline-offset: 2px; }
+
+/* ── Activity tabs ──────────────────────────────────────────── */
+.act-tabs { display: flex; gap: 4px; }
+.act-tab {
+  height: 32px;
+  padding-inline: 12px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  background: transparent;
+  font-family: var(--kc-font-display);
+  font-size: .8rem;
+  font-weight: 600;
+  color: var(--kc-text-2);
+  cursor: pointer;
+  transition: background .12s, color .12s, border-color .12s;
+}
+.act-tab:hover { background: var(--kc-surface-2); color: var(--kc-text-1); }
+.act-tab:focus-visible { outline: 3px solid var(--kc-accent); outline-offset: 2px; }
+.act-tab.active {
+  background: var(--kc-accent-dim);
+  color: var(--kc-accent);
+  border-color: var(--kc-accent);
+}
+
+/* ── Activity list ──────────────────────────────────────────── */
+.act-list { display: flex; flex-direction: column; list-style: none; }
+.act-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--kc-border);
+  transition: background .1s;
+}
+.act-item:last-child { border-bottom: none; }
+.act-item[hidden] { display: none !important; }
+.act-item:hover { background: var(--kc-surface-2); }
+.act-icon {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.act-icon--call  { background: rgba(63,210,120,.12); color: var(--kc-success); }
+.act-icon--email { background: rgba(94,122,195,.12); color: var(--kc-accent); }
+.act-icon--crm   { background: rgba(243,113,33,.12); color: var(--kc-orange); }
+.act-body { flex: 1; min-width: 0; }
+.act-headline {
+  font-size: .875rem;
+  color: var(--kc-text-1);
+  line-height: 1.4;
+}
+.act-detail {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: .8rem;
+  color: var(--kc-text-2);
+  margin-top: 2px;
+  line-height: 1.4;
+  flex-wrap: wrap;
+}
+.crm-stage {
+  display: inline-block;
+  padding: 1px 7px;
+  border-radius: 4px;
+  font-size: .75rem;
+  font-weight: 600;
+}
+.crm-stage.from { background: var(--kc-surface-3); color: var(--kc-text-2); }
+.crm-stage.to   { background: rgba(243,113,33,.15); color: var(--kc-orange); }
+.act-time {
+  font-size: .75rem;
+  color: var(--kc-text-3);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+
+/* ── Utility ────────────────────────────────────────────────── */
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+
+/* ── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  #dash-content { padding: 12px 12px 32px; gap: 20px; }
+  .conn-item { flex-wrap: wrap; }
+  .conn-actions { width: 100%; justify-content: flex-end; }
+  .dash-section-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,*::before,*::after { animation-duration:.01ms!important; transition-duration:.01ms!important; }
+}
+</style>
+
+<script>
+const srStatus = document.getElementById('sr-status');
+function announce(msg: string) {
+  if (!srStatus) return;
+  srStatus.textContent = '';
+  requestAnimationFrame(() => { srStatus.textContent = msg; });
+}
+
+/* ── Reminders ──────────────────────────────────────────────── */
+let remindCount = document.querySelectorAll('.remind-item').length;
+const remindBadge = document.querySelector('.dash-badge--warn');
+
+document.querySelectorAll<HTMLButtonElement>('.remind-done').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const item = btn.closest('.remind-item')!;
+    item.classList.add('done');
+    btn.disabled = true;
+    remindCount = Math.max(0, remindCount - 1);
+    if (remindBadge) { remindBadge.textContent = String(remindCount); remindBadge.hidden = remindCount === 0; }
+    announce('Reminder marked as done.');
+  });
+});
+
+/* ── Connection accept / decline ────────────────────────────── */
+let pendingCount = 2;
+const dashBadge = document.querySelector('.dash-badge');
+
+document.querySelectorAll<HTMLButtonElement>('.conn-btn.accept').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const li   = btn.closest('li')!;
+    const name = btn.dataset.name || 'Navigator';
+    li.remove();
+    pendingCount = Math.max(0, pendingCount - 1);
+    if (dashBadge) { dashBadge.textContent = String(pendingCount); dashBadge.hidden = pendingCount === 0; }
+    announce(`Connected with ${name}. Chat session started.`);
+  });
+});
+
+document.querySelectorAll<HTMLButtonElement>('.conn-btn.decline').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const li   = btn.closest('li')!;
+    const name = li.querySelector('.conn-name')?.textContent || 'Navigator';
+    li.remove();
+    pendingCount = Math.max(0, pendingCount - 1);
+    if (dashBadge) { dashBadge.textContent = String(pendingCount); dashBadge.hidden = pendingCount === 0; }
+    announce(`Connection from ${name} declined.`);
+  });
+});
+
+/* ── Transfer modal ─────────────────────────────────────────── */
+const transferModal   = document.getElementById('transfer-modal')!;
+const transferClose   = document.getElementById('transfer-close')!;
+const transferCancel  = document.getElementById('transfer-cancel')!;
+const transferConfirm = document.getElementById('transfer-confirm') as HTMLButtonElement;
+const transferSelect  = document.getElementById('transfer-select') as HTMLSelectElement;
+const transferLeadDisplay = document.getElementById('transfer-lead-display')!;
+
+function openTransfer(leadName: string) {
+  transferLeadDisplay.textContent = leadName;
+  transferSelect.value = '';
+  (document.getElementById('transfer-note') as HTMLTextAreaElement).value = '';
+  transferConfirm.disabled = true;
+  transferModal.hidden = false;
+  transferSelect.focus();
+  announce(`Transfer dialog opened for ${leadName}. Select a navigator.`);
+}
+function closeTransfer() { transferModal.hidden = true; }
+
+document.querySelectorAll<HTMLButtonElement>('.conn-btn.transfer').forEach(btn => {
+  btn.addEventListener('click', () => openTransfer(btn.dataset.name || 'lead'));
+});
+transferClose.addEventListener('click', closeTransfer);
+transferCancel.addEventListener('click', closeTransfer);
+transferModal.addEventListener('click', e => { if (e.target === transferModal) closeTransfer(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !transferModal.hidden) closeTransfer(); });
+
+transferSelect.addEventListener('change', () => {
+  transferConfirm.disabled = !transferSelect.value;
+});
+transferConfirm.addEventListener('click', () => {
+  const dest = transferSelect.options[transferSelect.selectedIndex].text;
+  const lead = transferLeadDisplay.textContent;
+  // TODO: POST /api/hubspot/transfer — log CRM swim-lane move
+  console.log('[Transfer]', lead, '→', dest);
+  announce(`${lead} transferred to ${dest}.`);
+  // Remove the connection row from the list
+  document.querySelectorAll<HTMLButtonElement>('.conn-btn.transfer').forEach(btn => {
+    if (btn.dataset.name === lead) btn.closest('li')?.remove();
+  });
+  pendingCount = Math.max(0, pendingCount - 1);
+  if (dashBadge) { dashBadge.textContent = String(pendingCount); dashBadge.hidden = pendingCount === 0; }
+  closeTransfer();
+});
+
+/* ── Activity filter tabs ───────────────────────────────────── */
+const tabs  = document.querySelectorAll<HTMLButtonElement>('.act-tab');
+const items = document.querySelectorAll<HTMLLIElement>('.act-item');
+
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    const filter = tab.dataset.filter!;
+    tabs.forEach(t => { t.classList.remove('active'); t.setAttribute('aria-pressed', 'false'); });
+    tab.classList.add('active');
+    tab.setAttribute('aria-pressed', 'true');
+    items.forEach(item => {
+      item.hidden = filter !== 'all' && item.dataset.type !== filter;
+    });
+    const label = filter === 'all' ? 'All activity' : `${tab.textContent} only`;
+    announce(`Showing: ${label}`);
+  });
+});
+</script>

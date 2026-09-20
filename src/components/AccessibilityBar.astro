@@ -70,6 +70,24 @@
     <button type="button" class="a11y-bar__btn a11y-bar__reset" data-a11y-reset>
       Reset
     </button>
+
+    <div class="a11y-bar__sep" aria-hidden="true"></div>
+
+    <!-- Light / Dark theme toggle -->
+    <button type="button" class="a11y-bar__btn a11y-bar__theme-btn" id="a11y-theme-btn"
+      aria-label="Switch to light mode">
+      <svg id="a11y-icon-sun" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden>
+        <circle cx="12" cy="12" r="5"/>
+        <line x1="12" y1="1"  x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+        <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+      </svg>
+      <svg id="a11y-icon-moon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+      <span id="a11y-theme-label">Light</span>
+    </button>
   </div>
 </div>
 
@@ -84,35 +102,37 @@
     top: 0;
     z-index: 200;
     width: 100%;
-    background: var(--color-surface, #F2F2F2);
-    border-bottom: 1px solid var(--color-border, #767676);
-    /* Dark mode */
-    --a11y-bar-bg: var(--color-surface, #F2F2F2);
-    --a11y-bar-text: var(--color-text, #222222);
+    --a11y-bar-bg: #F2F2F2;
+    --a11y-bar-text: #222222;
+    --a11y-bar-border: #767676;
     --a11y-bar-btn-bg: transparent;
     --a11y-bar-btn-hover: rgba(34,34,34,.08);
-    --a11y-bar-btn-active-bg: var(--color-accent, #933001);
+    --a11y-bar-btn-active-bg: #933001;
     --a11y-bar-btn-active-text: #ffffff;
-    --a11y-bar-focus: var(--color-focus, #5E7AC3);
+    --a11y-bar-focus: #5E7AC3;
+    background: var(--a11y-bar-bg);
+    border-bottom: 1px solid var(--a11y-bar-border);
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) .a11y-bar {
-      --a11y-bar-bg: #222222;
+      --a11y-bar-bg: #1a1a1a;
       --a11y-bar-text: #F2F2F2;
+      --a11y-bar-border: #444444;
       --a11y-bar-btn-hover: rgba(242,242,242,.10);
     }
   }
   :root[data-theme="dark"] .a11y-bar {
-    --a11y-bar-bg: #222222;
+    --a11y-bar-bg: #1a1a1a;
     --a11y-bar-text: #F2F2F2;
+    --a11y-bar-border: #444444;
     --a11y-bar-btn-hover: rgba(242,242,242,.10);
   }
   html[data-a11y-contrast="high"] .a11y-bar {
-    background: #000000;
+    --a11y-bar-bg: #000000;
     --a11y-bar-text: #ffffff;
+    --a11y-bar-border: #ffffff;
     --a11y-bar-btn-active-bg: #ffff00;
     --a11y-bar-btn-active-text: #000000;
-    border-bottom-color: #ffffff;
   }
 
   .a11y-bar__inner {
@@ -146,10 +166,10 @@
   .a11y-bar__sep {
     width: 1px;
     height: 20px;
-    background: var(--color-border, #767676);
+    background: var(--a11y-bar-border);
     flex-shrink: 0;
     margin-inline: 4px;
-    opacity: 0.5;
+    opacity: 0.6;
   }
 
   .a11y-bar__group {
@@ -258,4 +278,31 @@
   });
 
   syncButtons();
+
+  /* ── Theme toggle ───────────────────────────────────────────── */
+  const themeBtn     = document.getElementById('a11y-theme-btn');
+  const themeLabelEl = document.getElementById('a11y-theme-label');
+  const iconSunEl    = document.getElementById('a11y-icon-sun');
+  const iconMoonEl   = document.getElementById('a11y-icon-moon');
+
+  let darkMode = root.getAttribute('data-theme') !== 'light';
+
+  function applyTheme() {
+    root.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+    if (iconSunEl)    iconSunEl.hidden  = !darkMode;
+    if (iconMoonEl)   iconMoonEl.hidden =  darkMode;
+    if (themeLabelEl) themeLabelEl.textContent = darkMode ? 'Light' : 'Dark';
+    if (themeBtn)     themeBtn.setAttribute('aria-label', darkMode ? 'Switch to light mode' : 'Switch to dark mode');
+    try { localStorage.setItem('kc-theme', darkMode ? 'dark' : 'light'); } catch {}
+    const srStatus = document.getElementById('sr-status');
+    if (srStatus) {
+      srStatus.textContent = '';
+      requestAnimationFrame(() => { srStatus.textContent = darkMode ? 'Dark mode active' : 'Light mode active'; });
+    }
+  }
+
+  if (themeBtn) {
+    applyTheme();
+    themeBtn.addEventListener('click', () => { darkMode = !darkMode; applyTheme(); });
+  }
 </script>

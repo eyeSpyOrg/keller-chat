@@ -38,7 +38,7 @@ import { SITE } from '../config/site.js';
       <a href="/" class="kc-logo" aria-label="KellerChat home">
         <!-- Placeholder mark shown until /kc-logo.svg exists -->
         <span class="kc-logo-mark" aria-hidden="true">K</span>
-        <span class="kc-logo-wordmark">Keller<span class="kc-logo-chat">Chat</span></span>
+        <span class="kc-logo-wordmark">Keller<span class="kc-logo-sep" aria-hidden="true"> · </span><span class="kc-logo-chat">Chat</span></span>
       </a>
 
       <!-- Wake-word status indicator (screen-reader announced, not a button) -->
@@ -49,18 +49,15 @@ import { SITE } from '../config/site.js';
 
       <div class="kc-spacer" role="none"></div>
 
-      <!-- Dashboard button (connections) -->
-      <button class="kc-dash-btn" id="btn-conn"
-        aria-label="Dashboard — 2 pending connections"
-        aria-controls="conn-panel"
-        aria-expanded="false">
+      <!-- Dashboard link -->
+      <a href="/dashboard/" class="kc-dash-btn" aria-label="Dashboard — 2 pending connections">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
           <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
         </svg>
         Dashboard
-        <span class="kc-badge" id="conn-badge" aria-hidden="true">2</span>
-      </button>
+        <span class="kc-badge" aria-hidden="true">2</span>
+      </a>
 
       <!-- Audio Only pill button -->
       <button class="kc-pill-btn" id="btn-ao"
@@ -74,58 +71,21 @@ import { SITE } from '../config/site.js';
         Audio Only
       </button>
 
-      <!-- Light / Dark toggle -->
-      <button class="kc-icon-btn" id="btn-theme" aria-label="Switch to light mode">
-        <svg id="icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden>
-          <circle cx="12" cy="12" r="5"/>
-          <line x1="12" y1="1"  x2="12" y2="3"/>
-          <line x1="12" y1="21" x2="12" y2="23"/>
-          <line x1="4.22" y1="4.22"  x2="5.64"  y2="5.64"/>
-          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-          <line x1="1" y1="12" x2="3" y2="12"/>
-          <line x1="21" y1="12" x2="23" y2="12"/>
-          <line x1="4.22"  y1="19.78" x2="5.64"  y2="18.36"/>
-          <line x1="18.36" y1="5.64"  x2="19.78" y2="4.22"/>
+      <!-- Log in / Log out -->
+      <a href="/login/" class="kc-icon-btn kc-auth-btn" aria-label="Log out of KellerChat">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
         </svg>
-        <svg id="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-        </svg>
-      </button>
+        <span class="kc-btn-label">Log out</span>
+      </a>
     </header>
 
     <!-- Audio-only banner -->
     <div id="ao-banner" role="status" hidden>
       🎧 Audio-Only Mode — PTT active · messages read aloud
     </div>
-
-    <!-- Connections panel -->
-    <section id="conn-panel" aria-label="Incoming connection requests" hidden>
-      <h2 class="conn-heading">Incoming Connections</h2>
-      <ul class="conn-list" role="list">
-        <li class="conn-item">
-          <div class="conn-avatar" aria-hidden="true">MR</div>
-          <div class="conn-info">
-            <div class="conn-name">Maria R. — Navigator</div>
-            <div class="conn-meta">Referred by: UF Health Jacksonville · 2 min ago</div>
-          </div>
-          <div class="conn-actions">
-            <button class="conn-btn accept" data-name="Maria R." aria-label="Accept connection from Maria R.">Accept</button>
-            <button class="conn-btn decline" aria-label="Decline connection from Maria R.">Decline</button>
-          </div>
-        </li>
-        <li class="conn-item">
-          <div class="conn-avatar" aria-hidden="true">JT</div>
-          <div class="conn-info">
-            <div class="conn-name">James T. — Patient</div>
-            <div class="conn-meta">Referred by: Arlington Low Vision · 8 min ago</div>
-          </div>
-          <div class="conn-actions">
-            <button class="conn-btn accept" data-name="James T." aria-label="Accept connection from James T.">Accept</button>
-            <button class="conn-btn decline" aria-label="Decline connection from James T.">Decline</button>
-          </div>
-        </li>
-      </ul>
-    </section>
 
     <!-- Chat log -->
     <div id="chat-log"
@@ -228,75 +188,83 @@ import { SITE } from '../config/site.js';
 </BaseLayout>
 
 <style>
-/* Google Fonts: IBM Plex Sans + Mono */
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+/* Poppins + Open Sans are self-hosted via global.css @fontsource imports —
+   no extra network request needed here. */
 
 /* ── KellerChat token system — dark-first ─────────────────── */
 :root {
+  /* Dark-first KellerChat tokens — ESF palette integrated */
   --kc-bg:          #09101F;
   --kc-surface:     #101825;
   --kc-surface-2:   #192236;
   --kc-surface-3:   #1E2D48;
   --kc-border:      #1E2D48;
-  --kc-accent:      #4B9EFF;
-  --kc-accent-dim:  rgba(75,158,255,.13);
-  --kc-accent-deep: #0D2247;
+  /* Wink (#5E7AC3) = primary UI accent (buttons, highlights, focus) */
+  --kc-accent:      #5E7AC3;
+  --kc-accent-dim:  rgba(94,122,195,.15);
+  --kc-accent-deep: #0D1A3A;
+  /* Original Orange (#F37121) = forward-color, decorative, logo mark */
+  --kc-orange:      #F37121;
+  --kc-orange-dim:  rgba(243,113,33,.15);
+  /* Burnt Orange (#933001) = accessibility states, strong emphasis */
+  --kc-burnt:       #933001;
   --kc-text-1:      #EDF1FF;
   --kc-text-2:      #7A95C4;
   --kc-text-3:      #3F5880;
   --kc-success:     #3FD278;
   --kc-warning:     #F5BC4B;
   --kc-danger:      #F56B6B;
-  --kc-self-bubble: #0D2247;
+  --kc-self-bubble: #0D1A3A;
   --kc-peer-bubble: #192236;
-  --kc-font-ui:     'IBM Plex Sans', system-ui, sans-serif;
-  --kc-font-mono:   'IBM Plex Mono', monospace;
+  --kc-font-ui:     'Open Sans', system-ui, sans-serif;
+  --kc-font-mono:   ui-monospace, 'Cascadia Code', 'Fira Mono', monospace;
+  --kc-font-display: 'Poppins', var(--kc-font-ui);
   --kc-radius:      10px;
   --kc-radius-lg:   16px;
   --kc-shadow:      0 2px 16px rgba(0,0,0,.45);
 }
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]) {
-    --kc-bg:          #F0F4FB;
+    --kc-bg:          #F0F4F8;
     --kc-surface:     #FFFFFF;
-    --kc-surface-2:   #F0F4FB;
-    --kc-surface-3:   #E2EAF5;
-    --kc-border:      #C5D4EC;
-    --kc-accent:      #1565C0;
-    --kc-accent-dim:  rgba(21,101,192,.10);
-    --kc-accent-deep: #D0E4FF;
+    --kc-surface-2:   #EEF1F7;
+    --kc-surface-3:   #E2E8F2;
+    --kc-border:      #C8D4E8;
+    --kc-accent:      #3F5DAA;
+    --kc-accent-dim:  rgba(63,93,170,.10);
+    --kc-accent-deep: #D6E0F5;
     --kc-text-1:      #0A1830;
     --kc-text-2:      #3A5070;
     --kc-text-3:      #7A9ABE;
-    --kc-self-bubble: #D0E4FF;
+    --kc-self-bubble: #D6E0F5;
     --kc-peer-bubble: #FFFFFF;
     --kc-shadow:      0 2px 12px rgba(0,0,0,.12);
   }
 }
 :root[data-theme="light"] {
-  --kc-bg:          #F0F4FB;
+  --kc-bg:          #F0F4F8;
   --kc-surface:     #FFFFFF;
-  --kc-surface-2:   #F0F4FB;
-  --kc-surface-3:   #E2EAF5;
-  --kc-border:      #C5D4EC;
-  --kc-accent:      #1565C0;
-  --kc-accent-dim:  rgba(21,101,192,.10);
-  --kc-accent-deep: #D0E4FF;
+  --kc-surface-2:   #EEF1F7;
+  --kc-surface-3:   #E2E8F2;
+  --kc-border:      #C8D4E8;
+  --kc-accent:      #3F5DAA;
+  --kc-accent-dim:  rgba(63,93,170,.10);
+  --kc-accent-deep: #D6E0F5;
   --kc-text-1:      #0A1830;
   --kc-text-2:      #3A5070;
   --kc-text-3:      #7A9ABE;
-  --kc-self-bubble: #D0E4FF;
+  --kc-self-bubble: #D6E0F5;
   --kc-peer-bubble: #FFFFFF;
   --kc-shadow:      0 2px 12px rgba(0,0,0,.12);
 }
 
 
 /* Override site body/main for full-height chat shell */
-body { background: var(--kc-bg) !important; font-family: var(--kc-font-ui); }
+:global(body) { background: var(--kc-bg) !important; font-family: var(--kc-font-ui) !important; }
 /* Hide site Header/Footer inside this page — chat is self-contained */
-body > .site-header,
-body > .site-footer { display: none !important; }
-#main-content {
+:global(body > .site-header),
+:global(body > .site-footer) { display: none !important; }
+:global(#main-content) {
   padding: 0 !important;
   display: flex;
   flex-direction: column;
@@ -316,7 +284,7 @@ body > .site-footer { display: none !important; }
 
 /* ── KellerChat app bar ─────────────────────────────────────── */
 #kc-header {
-  height: 56px;
+  height: 68px;
   background: var(--kc-surface);
   border-bottom: 1px solid var(--kc-border);
   display: flex;
@@ -338,25 +306,34 @@ body > .site-footer { display: none !important; }
 }
 .kc-logo:focus-visible { outline: 3px solid var(--kc-accent); outline-offset: 3px; border-radius: 6px; }
 .kc-logo-mark {
-  width: 36px; height: 36px;
-  background: var(--kc-accent);
+  width: 38px; height: 38px;
+  /* Original Orange (#F37121) + Shadow Black: 5.1:1 ✓ */
+  background: var(--kc-orange);
   border-radius: 8px;
   display: grid;
   place-items: center;
-  font-family: var(--kc-font-ui);
+  font-family: var(--kc-font-display);
   font-weight: 700;
   font-size: 1.15rem;
-  color: #fff;
+  color: #111111;
   flex-shrink: 0;
   letter-spacing: -.01em;
 }
 .kc-logo-wordmark {
-  font-family: var(--kc-font-ui);
+  font-family: var(--kc-font-display);
   font-size: 1.05rem;
   font-weight: 600;
   letter-spacing: -.02em;
 }
-.kc-logo-chat { color: var(--kc-accent); }
+/* "Keller" and "Chat" separated by a thin slash */
+.kc-logo-sep {
+  color: var(--kc-text-3);
+  font-weight: 300;
+  margin-inline: 3px;
+  font-size: 0.9em;
+}
+/* "Chat" in Original Orange — decorative forward accent */
+.kc-logo-chat { color: var(--kc-orange); }
 
 .kc-spacer { flex: 1; min-width: 0; }
 
@@ -365,22 +342,22 @@ body > .site-footer { display: none !important; }
   position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  height: 44px;
-  padding-inline: 14px;
+  gap: 8px;
+  height: 52px;
+  padding-inline: 18px;
   background: var(--kc-surface-2);
   color: var(--kc-text-1);
-  border: 1px solid var(--kc-border);
+  border: 2px solid var(--kc-border);
   border-radius: var(--kc-radius);
-  font-family: var(--kc-font-ui);
-  font-size: 0.875rem;
-  font-weight: 600;
+  font-family: var(--kc-font-display);
+  font-size: 0.9375rem;
+  font-weight: 700;
   cursor: pointer;
   white-space: nowrap;
-  transition: background 0.15s;
+  transition: background 0.15s, border-color 0.15s;
   flex-shrink: 0;
 }
-.kc-dash-btn:hover { background: var(--kc-surface-3); }
+.kc-dash-btn:hover { background: var(--kc-surface-3); border-color: var(--kc-accent); }
 .kc-dash-btn:focus-visible { outline: 3px solid var(--kc-accent); outline-offset: 2px; }
 .kc-dash-btn[aria-expanded="true"] {
   background: var(--kc-accent-dim);
@@ -392,31 +369,35 @@ body > .site-footer { display: none !important; }
 .kc-pill-btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  height: 44px;
-  padding-inline: 16px;
+  gap: 8px;
+  height: 52px;
+  padding-inline: 20px;
   background: var(--kc-surface-2);
-  color: var(--kc-text-2);
-  border: 1px solid var(--kc-border);
+  color: var(--kc-text-1);
+  border: 2px solid var(--kc-border);
   border-radius: 999px;
-  font-family: var(--kc-font-ui);
-  font-size: 0.875rem;
-  font-weight: 600;
+  font-family: var(--kc-font-display);
+  font-size: 0.9375rem;
+  font-weight: 700;
   cursor: pointer;
   white-space: nowrap;
   transition: background 0.15s, color 0.15s, border-color 0.15s;
   flex-shrink: 0;
 }
-.kc-pill-btn:hover { background: var(--kc-surface-3); color: var(--kc-text-1); }
+.kc-pill-btn:hover { background: var(--kc-surface-3); border-color: var(--kc-accent); }
 .kc-pill-btn:focus-visible { outline: 3px solid var(--kc-accent); outline-offset: 2px; }
 .kc-pill-btn[aria-pressed="true"] {
   background: var(--kc-accent);
   color: #ffffff;
   border-color: var(--kc-accent);
 }
-@media (max-width: 520px) {
-  .kc-pill-btn span.kc-pill-label { display: none; }
-  .kc-dash-btn span.kc-dash-label { display: none; }
+@media (max-width: 600px) {
+  .kc-pill-btn .kc-pill-label { display: none; }
+  .kc-dash-btn .kc-dash-label { display: none; }
+  .kc-btn-label { display: none; }
+  .kc-dash-btn { padding-inline: 14px; }
+  .kc-pill-btn { padding-inline: 14px; }
+  .kc-icon-btn { padding-inline: 14px; }
 }
 
 /* Wake status — minimal dot indicator, not a control */
@@ -439,22 +420,27 @@ body > .site-footer { display: none !important; }
 
 /* Icon button */
 .kc-icon-btn {
-  width: 44px; height: 44px;
-  display: grid;
-  place-items: center;
-  background: none;
-  border: none;
+  min-width: 52px; height: 52px;
+  padding-inline: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--kc-surface-2);
+  border: 2px solid var(--kc-border);
   border-radius: var(--kc-radius);
-  color: var(--kc-text-2);
+  color: var(--kc-text-1);
+  font-family: var(--kc-font-display);
+  font-size: 0.9375rem;
+  font-weight: 700;
   cursor: pointer;
   position: relative;
-  transition: background .15s, color .15s;
+  transition: background .15s, border-color .15s;
   flex-shrink: 0;
 }
-.kc-icon-btn:hover { background: var(--kc-accent-dim); color: var(--kc-text-1); }
+.kc-icon-btn:hover { background: var(--kc-surface-3); border-color: var(--kc-accent); }
 .kc-icon-btn:focus-visible { outline: 3px solid var(--kc-accent); outline-offset: 2px; }
 .kc-icon-btn.active { color: var(--kc-accent); background: var(--kc-accent-dim); }
-.kc-icon-btn svg { pointer-events: none; }
+.kc-icon-btn svg { pointer-events: none; flex-shrink: 0; }
 
 .kc-badge {
   position: absolute;
@@ -473,6 +459,9 @@ body > .site-footer { display: none !important; }
 }
 .kc-badge[hidden] { display: none !important; }
 
+/* Log out button */
+.kc-auth-btn { text-decoration: none; }
+
 /* ── Audio-only banner ──────────────────────────────────────── */
 #ao-banner {
   background: var(--kc-accent-deep);
@@ -487,71 +476,6 @@ body > .site-footer { display: none !important; }
   flex-shrink: 0;
 }
 #ao-banner[hidden] { display: none !important; }
-
-/* ── Connections panel ──────────────────────────────────────── */
-#conn-panel {
-  background: var(--kc-surface);
-  border-bottom: 1px solid var(--kc-border);
-  padding: 12px 16px;
-  flex-shrink: 0;
-}
-#conn-panel[hidden] { display: none !important; }
-.conn-heading {
-  font-size: .7rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: .08em;
-  color: var(--kc-text-3);
-  margin-bottom: 10px;
-}
-.conn-list { display: flex; flex-direction: column; gap: 8px; list-style: none; }
-.conn-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  background: var(--kc-surface-2);
-  border: 1px solid var(--kc-border);
-  border-radius: var(--kc-radius);
-}
-.conn-avatar {
-  width: 36px; height: 36px;
-  border-radius: 50%;
-  background: var(--kc-accent-dim);
-  border: 2px solid var(--kc-accent);
-  display: grid;
-  place-items: center;
-  font-weight: 700;
-  font-size: .85rem;
-  color: var(--kc-accent);
-  flex-shrink: 0;
-}
-.conn-info { flex: 1; min-width: 0; }
-.conn-name {
-  font-size: .875rem;
-  font-weight: 600;
-  color: var(--kc-text-1);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.conn-meta { font-size: .75rem; color: var(--kc-text-2); margin-top: 1px; }
-.conn-actions { display: flex; gap: 6px; }
-.conn-btn {
-  height: 32px;
-  padding-inline: 12px;
-  border-radius: 6px;
-  border: none;
-  font-size: .75rem;
-  font-weight: 600;
-  cursor: pointer;
-  font-family: var(--kc-font-ui);
-  transition: opacity .15s;
-}
-.conn-btn:focus-visible { outline: 3px solid var(--kc-accent); outline-offset: 2px; }
-.conn-btn.accept  { background: var(--kc-success); color: #000; }
-.conn-btn.decline { background: var(--kc-surface-3); color: var(--kc-text-2); }
-.conn-btn:hover   { opacity: .85; }
 
 /* ── Chat log ───────────────────────────────────────────────── */
 #chat-log {
@@ -746,6 +670,7 @@ body > .site-footer { display: none !important; }
   width: 48px; height: 48px;
   border-radius: 50%;
   border: none;
+  /* Wink accent send button */
   background: var(--kc-accent);
   color: #fff;
   display: grid;
@@ -818,7 +743,7 @@ body.ao-mode #btn-send { opacity: .4; pointer-events: none; }
   height: 44px;
   border-radius: var(--kc-radius);
   border: none;
-  font-family: var(--kc-font-ui);
+  font-family: var(--kc-font-display);
   font-size: .875rem;
   font-weight: 600;
   cursor: pointer;
@@ -884,32 +809,13 @@ const wavePeer = document.getElementById('wave-peer');
 if (wavePeer) drawWave(wavePeer);
 
 /* ── THEME ──────────────────────────────────────────────────── */
-const root      = document.documentElement;
-const btnTheme  = document.getElementById('btn-theme');
-const iconSun   = document.getElementById('icon-sun');
-const iconMoon  = document.getElementById('icon-moon');
-let darkMode = true;
-try {
-  const saved = localStorage.getItem('kc-theme');
-  if (saved === 'light') { darkMode = false; root.dataset.theme = 'light'; }
-  else root.dataset.theme = 'dark';
-} catch(e) {}
-
-function applyTheme() {
-  root.dataset.theme = darkMode ? 'dark' : 'light';
-  iconSun.hidden  = !darkMode;
-  iconMoon.hidden = darkMode;
-  btnTheme.setAttribute('aria-label', darkMode ? 'Switch to light mode' : 'Switch to dark mode');
-  try { localStorage.setItem('kc-theme', darkMode ? 'dark' : 'light'); } catch(e) {}
-  announce(darkMode ? 'Dark mode active' : 'Light mode active');
-}
-applyTheme();
-btnTheme.addEventListener('click', () => { darkMode = !darkMode; applyTheme(); });
+// Theme is managed globally by AccessibilityBar.astro
 
 /* ── AUDIO-ONLY ─────────────────────────────────────────────── */
 const btnAO    = document.getElementById('btn-ao');
 const aoBanner = document.getElementById('ao-banner');
 let aoMode = false;
+try { aoMode = localStorage.getItem('kc-audio-only') === 'true'; } catch(e) {}
 const synth = window.speechSynthesis || null;
 function speakText(text) {
   if (!synth) return;
@@ -918,60 +824,24 @@ function speakText(text) {
   utt.rate = 1; utt.pitch = 1;
   synth.speak(utt);
 }
-btnAO.addEventListener('click', () => {
-  aoMode = !aoMode;
+function applyAOMode() {
   btnAO.setAttribute('aria-pressed', String(aoMode));
-  btnAO.setAttribute('aria-label', aoMode ? 'Toggle audio-only mode: currently on' : 'Toggle audio-only mode: currently off');
+  btnAO.setAttribute('aria-label', aoMode ? 'Audio-only mode: currently on' : 'Audio-only mode: currently off');
   btnAO.classList.toggle('active', aoMode);
   aoBanner.hidden = !aoMode;
   document.body.classList.toggle('ao-mode', aoMode);
+}
+applyAOMode();
+
+btnAO.addEventListener('click', () => {
+  aoMode = !aoMode;
+  try { localStorage.setItem('kc-audio-only', String(aoMode)); } catch(e) {}
+  applyAOMode();
   announce(aoMode
     ? 'Audio-only mode activated. Messages will be read aloud. Use push-to-talk to speak.'
     : 'Audio-only mode deactivated. Text input restored.');
 });
 
-/* ── CONNECTIONS ────────────────────────────────────────────── */
-const btnConn   = document.getElementById('btn-conn');
-const connPanel = document.getElementById('conn-panel');
-const connBadge = document.getElementById('conn-badge');
-btnConn.addEventListener('click', () => {
-  const open = connPanel.hidden;
-  connPanel.hidden = !open;
-  btnConn.setAttribute('aria-expanded', String(open));
-  if (open) announce('Connections panel opened, 2 pending requests');
-});
-let pendingCount = 2;
-document.querySelectorAll('.conn-btn.accept').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const li   = btn.closest('li');
-    const name = btn.dataset.name || 'Navigator';
-    li.remove();
-    pendingCount = Math.max(0, pendingCount - 1);
-    connBadge.textContent = pendingCount;
-    connBadge.hidden = pendingCount === 0;
-    btnConn.setAttribute('aria-label', pendingCount > 0
-      ? `Incoming connections, ${pendingCount} pending`
-      : 'Incoming connections, none pending');
-    announce(`Connected with ${name}. Starting chat.`);
-    if (pendingCount === 0) { connPanel.hidden = true; btnConn.setAttribute('aria-expanded', 'false'); }
-    if (aoMode) speakText(`Connection accepted with ${name}. Starting chat.`);
-  });
-});
-document.querySelectorAll('.conn-btn.decline').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const li   = btn.closest('li');
-    const name = li.querySelector('.conn-name').textContent;
-    li.remove();
-    pendingCount = Math.max(0, pendingCount - 1);
-    connBadge.textContent = pendingCount;
-    connBadge.hidden = pendingCount === 0;
-    btnConn.setAttribute('aria-label', pendingCount > 0
-      ? `Incoming connections, ${pendingCount} pending`
-      : 'Incoming connections, none pending');
-    if (pendingCount === 0) { connPanel.hidden = true; btnConn.setAttribute('aria-expanded', 'false'); }
-    announce(`Connection from ${name} declined.`);
-  });
-});
 
 /* ── CHAT ───────────────────────────────────────────────────── */
 const chatLog = document.getElementById('chat-log');
