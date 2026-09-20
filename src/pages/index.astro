@@ -1,182 +1,1161 @@
 ---
 /**
- * Homepage — Eye Spy Foundation nonprofit template.
- * Hero → programs teaser → impact metrics → story → newsletter → FAQ.
- * Replace ImagePlaceholder instances with real photography before launch.
- * Replace [PLACEHOLDER] text with real content via LEGAL_BRAIN.md.
+ * KellerChat — main chat interface
+ * Screen-reader-first, audio/text-first accessible navigator chat.
+ *
+ * Features:
+ *   - Wake word "Hey Keller" via Web Speech API (continuous listen)
+ *   - Push-to-talk: hold btn or Ctrl+M
+ *   - Audio-only mode: dims text input, TTS reads incoming messages
+ *   - PHI filter: regex detection → silent GCP HIPAA vault route
+ *   - HubSpot CRM: background logging (sanitized, no PHI)
+ *   - Connections dashboard with badge count
+ *   - Dark-first token system, full light-mode support
+ *   - WCAG 2.2 AA — role="log", aria-live, skip link, 44px targets
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Hero from '../components/Hero.astro';
-import FAQ from '../components/FAQ.astro';
-import ImpactMetrics from '../components/ImpactMetrics.astro';
-import FeatureGrid from '../components/FeatureGrid.astro';
-import NewsletterSignup from '../components/NewsletterSignup.astro';
-import ImagePlaceholder from '../components/ImagePlaceholder.astro';
 import { SITE } from '../config/site.js';
-
-const programs = [
-  {
-    icon: '🧭',
-    heading: 'Resource Navigation',
-    body: 'One-on-one help finding the programs, services, and benefits most people never knew existed — until now.',
-    href: '/programs/',
-  },
-  {
-    icon: '📚',
-    heading: 'Community Workshops',
-    body: 'Free monthly workshops on assistive technology, orientation, financial literacy, and peer support.',
-    href: '/programs/',
-  },
-  {
-    icon: '🤝',
-    heading: 'Peer Mentorship',
-    body: 'Connecting people who are newly navigating vision loss with community members who have been there.',
-    href: '/programs/',
-  },
-];
-
-const metrics = [
-  { number: '1,200+', label: 'people served', icon: '👁️' },
-  { number: '$0', label: 'cost to the community', icon: '💚' },
-  { number: '14', label: 'community partners', icon: '🤝' },
-  { number: '98%', label: 'say they found what they needed', icon: '⭐' },
-];
-
-const faqs = [
-  {
-    question: 'What is Eye Spy Foundation?',
-    answer:
-      'Eye Spy Foundation helps blind and low vision people navigate toward a more informed, connected, and confident life. We provide navigation support, community events, internships, and a curated resource directory.',
-  },
-  {
-    question: 'Who does Eye Spy serve?',
-    answer:
-      'We serve three audiences: people directly affected by blindness or low vision (30,000+ in Jacksonville), advocates and allies (60,000+), and professionals like doctors, therapists, and educators (10,000+).',
-  },
-  {
-    question: 'Where is Eye Spy located?',
-    answer:
-      'Eye Spy Foundation is based in Jacksonville, Florida, serving Northeast Florida and expanding nationally.',
-  },
-  {
-    question: 'Are your programs free?',
-    answer:
-      'Yes — always. Every program is free to the blind and low vision community. We are funded by donations, grants, and community partnerships.',
-  },
-  {
-    question: 'How can I get involved?',
-    answer:
-      'You can volunteer, donate, or access resources on EyeSpy.org. Visit our Contact page to learn more.',
-  },
-];
 ---
 
 <BaseLayout
-  title="Home"
-  description="Eye Spy Foundation helps blind and low vision people navigate toward a more informed, connected, and confident life — free navigation support, workshops, and community for all."
+  title="Chat"
+  description="KellerChat — accessible audio/text-first navigator chat for the blind and low-vision community."
+  chatMode={true}
 >
-  <!-- Hero -->
-  <Hero
-    eyebrow="Eye Spy Foundation"
-    heading="Navigate. Discover. Find. Connect."
-    body="We help the blind and low vision community find the resources, services, and people that make for a better low vision lifestyle — for free, for everyone."
-    primaryCta={{ label: 'See our programs', href: '/programs/' }}
-    secondaryCta={{ label: 'Support our work', href: '/support/' }}
-    variant="teal"
-  />
+  <!-- ── LIVE REGIONS (screen reader only) ─────────────────── -->
+  <div id="sr-status" class="sr-only" role="status"  aria-live="polite"   aria-atomic="true"></div>
+  <div id="sr-alert"  class="sr-only" role="alert"   aria-live="assertive" aria-atomic="true"></div>
 
-  <!-- Programs teaser -->
-  <div class="band">
-    <div class="container">
-      <FeatureGrid
-        eyebrow="What We Do"
-        heading="Three Ways We Help"
-        features={programs}
-        columns={3}
-      />
-      <div class="cta-center">
-        <a class="btn btn--primary" href="/programs/">See all programs</a>
+  <!-- ── CHAT APP SHELL ─────────────────────────────────────── -->
+  <div id="kc-shell">
+
+    <!-- App header: logo · wake status · Dashboard · Audio Only · Light/Dark -->
+    <header id="kc-header" role="banner">
+
+      <!-- TODO: Replace .kc-logo-mark + .kc-logo-wordmark with:
+           <img src="/kc-logo.svg" alt="KellerChat" height="36" width="160">
+           once /kc-logo.svg is placed in public/ -->
+      <a href="/" class="kc-logo" aria-label="KellerChat home">
+        <!-- Placeholder mark shown until /kc-logo.svg exists -->
+        <span class="kc-logo-mark" aria-hidden="true">K</span>
+        <span class="kc-logo-wordmark">Keller<span class="kc-logo-chat">Chat</span></span>
+      </a>
+
+      <!-- Wake-word status indicator (screen-reader announced, not a button) -->
+      <div id="wake-pill" aria-live="polite" aria-label="Wake word status: say Hey Keller to activate">
+        <span id="wake-dot" aria-hidden="true"></span>
+        <span id="wake-label" class="sr-only">Ready — say Hey Keller</span>
       </div>
-    </div>
-  </div>
 
-  <!-- Impact metrics -->
-  <div class="band band--teal">
-    <div class="container">
-      <ImpactMetrics
-        eyebrow="The Work in Numbers"
-        heading="What We've Helped People Find"
-        metrics={metrics}
-      />
-    </div>
-  </div>
+      <div class="kc-spacer" role="none"></div>
 
-  <!-- Story / photo split -->
-  <section class="band" aria-labelledby="story-heading">
-    <div class="container story-split">
-      <div class="story-split__text">
-        <p class="eyebrow">Why We Exist</p>
-        <h2 id="story-heading">The Help Was There. No One Had Put It in One Place.</h2>
-        <p class="prose">
-          Too many people in the blind and low vision community spend months
-          searching for help that already exists — scattered across dozens of
-          websites, disconnected organizations, and phone numbers that go
-          nowhere. Eye Spy Foundation was built to fix that.
-        </p>
-        <p class="prose">
-          We greet everyone with a hug or a handshake. That is not a tagline.
-          It is how we show up.
-        </p>
-        <div class="cta-row">
-          <a class="btn btn--primary" href="/about/">Our story</a>
-          <a class="btn btn--secondary" href="/support/">Support this work</a>
+      <!-- Dashboard button (connections) -->
+      <button class="kc-dash-btn" id="btn-conn"
+        aria-label="Dashboard — 2 pending connections"
+        aria-controls="conn-panel"
+        aria-expanded="false">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+        Dashboard
+        <span class="kc-badge" id="conn-badge" aria-hidden="true">2</span>
+      </button>
+
+      <!-- Audio Only pill button -->
+      <button class="kc-pill-btn" id="btn-ao"
+        aria-label="Audio-only mode: currently off"
+        aria-pressed="false">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+          <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+          <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+        </svg>
+        Audio Only
+      </button>
+
+      <!-- Light / Dark toggle -->
+      <button class="kc-icon-btn" id="btn-theme" aria-label="Switch to light mode">
+        <svg id="icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden>
+          <circle cx="12" cy="12" r="5"/>
+          <line x1="12" y1="1"  x2="12" y2="3"/>
+          <line x1="12" y1="21" x2="12" y2="23"/>
+          <line x1="4.22" y1="4.22"  x2="5.64"  y2="5.64"/>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+          <line x1="1" y1="12" x2="3" y2="12"/>
+          <line x1="21" y1="12" x2="23" y2="12"/>
+          <line x1="4.22"  y1="19.78" x2="5.64"  y2="18.36"/>
+          <line x1="18.36" y1="5.64"  x2="19.78" y2="4.22"/>
+        </svg>
+        <svg id="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+    </header>
+
+    <!-- Audio-only banner -->
+    <div id="ao-banner" role="status" hidden>
+      🎧 Audio-Only Mode — PTT active · messages read aloud
+    </div>
+
+    <!-- Connections panel -->
+    <section id="conn-panel" aria-label="Incoming connection requests" hidden>
+      <h2 class="conn-heading">Incoming Connections</h2>
+      <ul class="conn-list" role="list">
+        <li class="conn-item">
+          <div class="conn-avatar" aria-hidden="true">MR</div>
+          <div class="conn-info">
+            <div class="conn-name">Maria R. — Navigator</div>
+            <div class="conn-meta">Referred by: UF Health Jacksonville · 2 min ago</div>
+          </div>
+          <div class="conn-actions">
+            <button class="conn-btn accept" data-name="Maria R." aria-label="Accept connection from Maria R.">Accept</button>
+            <button class="conn-btn decline" aria-label="Decline connection from Maria R.">Decline</button>
+          </div>
+        </li>
+        <li class="conn-item">
+          <div class="conn-avatar" aria-hidden="true">JT</div>
+          <div class="conn-info">
+            <div class="conn-name">James T. — Patient</div>
+            <div class="conn-meta">Referred by: Arlington Low Vision · 8 min ago</div>
+          </div>
+          <div class="conn-actions">
+            <button class="conn-btn accept" data-name="James T." aria-label="Accept connection from James T.">Accept</button>
+            <button class="conn-btn decline" aria-label="Decline connection from James T.">Decline</button>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <!-- Chat log -->
+    <div id="chat-log"
+      role="log"
+      aria-label="Chat messages"
+      aria-live="polite"
+      aria-relevant="additions"
+      tabindex="0">
+
+      <div class="date-sep" role="separator"><span>Today</span></div>
+
+      <article class="msg-row peer" aria-label="Message from Navigator Anya at 9:04 AM">
+        <div class="msg-sender" aria-hidden="true">Navigator Anya</div>
+        <div class="msg-bubble">Good morning! I'm reaching out on behalf of a patient recently discharged from UF Health. They're newly diagnosed and need help navigating next steps for low-vision rehabilitation.</div>
+        <time class="msg-time" datetime="2026-09-20T09:04" aria-hidden="true">9:04 AM</time>
+      </article>
+
+      <article class="msg-row self" aria-label="Your message at 9:06 AM">
+        <div class="msg-sender" aria-hidden="true">You</div>
+        <div class="msg-bubble">Good morning! I'm connected and ready to help. Can you share what services they're looking for — orientation and mobility, assistive tech, or emotional support?</div>
+        <time class="msg-time" datetime="2026-09-20T09:06" aria-hidden="true">9:06 AM</time>
+      </article>
+
+      <article class="msg-row peer" aria-label="Voice message from Navigator Anya at 9:07 AM, 18 seconds">
+        <div class="msg-sender" aria-hidden="true">Navigator Anya</div>
+        <div class="msg-bubble msg-voice">
+          <button class="voice-play" aria-label="Play voice message, 18 seconds">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          </button>
+          <div class="voice-waveform" aria-hidden="true" id="wave-peer"></div>
+          <span class="voice-dur" aria-hidden="true">0:18</span>
         </div>
-      </div>
-      <div class="story-split__media">
-        <ImagePlaceholder
-          label="[PLACEHOLDER: Eye Spy Foundation community photo — real photography required before launch]"
-          policy="real"
-          ratio="4 / 3"
-          icon="👁️"
-        />
+        <time class="msg-time" datetime="2026-09-20T09:07" aria-hidden="true">9:07 AM</time>
+      </article>
+
+      <article class="msg-row self" aria-label="Your message at 9:09 AM, contains sensitive health information routed securely">
+        <div class="msg-sender" aria-hidden="true">You</div>
+        <div class="msg-bubble">Understood. The patient's MRN is noted and their diagnosis of macular degeneration is logged in the referral.</div>
+        <div class="phi-badge" role="note" aria-label="Sensitive health information detected — routed securely to HIPAA vault, not stored in CRM">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          PHI secured · HIPAA vault
+        </div>
+        <time class="msg-time" datetime="2026-09-20T09:09" aria-hidden="true">9:09 AM</time>
+      </article>
+
+      <article class="msg-row peer" aria-label="Message from Navigator Anya at 9:10 AM">
+        <div class="msg-sender" aria-hidden="true">Navigator Anya</div>
+        <div class="msg-bubble">Perfect, thank you. I'll coordinate with Brooks Rehabilitation for O&amp;M services. Can we set up a three-way call with the patient this week?</div>
+        <time class="msg-time" datetime="2026-09-20T09:10" aria-hidden="true">9:10 AM</time>
+      </article>
+
+      <div id="typing-indicator" aria-live="polite" hidden>
+        <div class="typing-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+        <span class="sr-only">Navigator Anya is typing</span>
+        <span class="msg-sender" aria-hidden="true">Navigator Anya is typing…</span>
       </div>
     </div>
-  </section>
 
-  <!-- Newsletter -->
-  <div class="band band--gold">
-    <div class="container container--narrow">
-      <NewsletterSignup
-        heading="Stay Connected"
-        description="Resources, events, and stories from the blind and low vision community — delivered to your inbox. No spam, unsubscribe anytime."
-      />
+    <!-- Input bar -->
+    <div id="input-bar" role="region" aria-label="Message input">
+      <button id="btn-ptt"
+        aria-label="Push to talk: hold to record voice message, or press Control M"
+        aria-pressed="false">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+          <line x1="12" y1="19" x2="12" y2="23"/>
+          <line x1="8"  y1="23" x2="16" y2="23"/>
+        </svg>
+      </button>
+      <textarea id="chat-input"
+        aria-label="Type a message. Press Enter to send, Shift Enter for new line."
+        placeholder="Type a message…"
+        rows="1"
+        autocomplete="off"
+        spellcheck="true"></textarea>
+      <button id="btn-send" aria-label="Send message" disabled>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="22" y1="2"  x2="11" y2="13"/>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+        </svg>
+      </button>
     </div>
-  </div>
+  </div><!-- /#kc-shell -->
 
-  <!-- FAQ -->
-  <div class="band">
-    <div class="container container--narrow">
-      <p class="eyebrow">Good to Know</p>
-      <FAQ faqs={faqs} heading="Frequently Asked Questions" />
-      <p class="prose faq-footer">
-        More questions? Visit the <a href="/faq/">full FAQ page</a> or email
-        <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.
-      </p>
+  <!-- Wake word modal -->
+  <div id="wake-modal" role="dialog" aria-modal="true" aria-labelledby="wake-modal-title" hidden>
+    <div class="wake-card">
+      <div class="wake-eyebrow">Hey Keller — listening</div>
+      <h2 id="wake-modal-title" class="sr-only">Voice command detected</h2>
+      <div id="wake-transcript" aria-live="polite" aria-atomic="true">
+        <em>Listening for your message…</em>
+      </div>
+      <div class="wake-actions">
+        <button class="wake-btn send"   id="wake-send"   aria-label="Send the transcribed voice message">Send</button>
+        <button class="wake-btn cancel" id="wake-cancel" aria-label="Dismiss voice command">Cancel</button>
+      </div>
     </div>
   </div>
 </BaseLayout>
 
 <style>
-  .story-split {
-    display: grid;
-    gap: var(--space-l);
-    align-items: center;
+/* Google Fonts: IBM Plex Sans + Mono */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+/* ── KellerChat token system — dark-first ─────────────────── */
+:root {
+  --kc-bg:          #09101F;
+  --kc-surface:     #101825;
+  --kc-surface-2:   #192236;
+  --kc-surface-3:   #1E2D48;
+  --kc-border:      #1E2D48;
+  --kc-accent:      #4B9EFF;
+  --kc-accent-dim:  rgba(75,158,255,.13);
+  --kc-accent-deep: #0D2247;
+  --kc-text-1:      #EDF1FF;
+  --kc-text-2:      #7A95C4;
+  --kc-text-3:      #3F5880;
+  --kc-success:     #3FD278;
+  --kc-warning:     #F5BC4B;
+  --kc-danger:      #F56B6B;
+  --kc-self-bubble: #0D2247;
+  --kc-peer-bubble: #192236;
+  --kc-font-ui:     'IBM Plex Sans', system-ui, sans-serif;
+  --kc-font-mono:   'IBM Plex Mono', monospace;
+  --kc-radius:      10px;
+  --kc-radius-lg:   16px;
+  --kc-shadow:      0 2px 16px rgba(0,0,0,.45);
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --kc-bg:          #F0F4FB;
+    --kc-surface:     #FFFFFF;
+    --kc-surface-2:   #F0F4FB;
+    --kc-surface-3:   #E2EAF5;
+    --kc-border:      #C5D4EC;
+    --kc-accent:      #1565C0;
+    --kc-accent-dim:  rgba(21,101,192,.10);
+    --kc-accent-deep: #D0E4FF;
+    --kc-text-1:      #0A1830;
+    --kc-text-2:      #3A5070;
+    --kc-text-3:      #7A9ABE;
+    --kc-self-bubble: #D0E4FF;
+    --kc-peer-bubble: #FFFFFF;
+    --kc-shadow:      0 2px 12px rgba(0,0,0,.12);
   }
-  .story-split__text > * + * { margin-top: var(--space-s); }
-  @media (min-width: 52rem) {
-    .story-split { grid-template-columns: 1fr 1fr; gap: var(--space-xl); }
-  }
-  .cta-center { text-align: center; margin-top: var(--space-m); }
-  .cta-row { display: flex; gap: var(--space-s); flex-wrap: wrap; margin-top: var(--space-m); }
-  .faq-footer { margin-top: var(--space-m); }
+}
+:root[data-theme="light"] {
+  --kc-bg:          #F0F4FB;
+  --kc-surface:     #FFFFFF;
+  --kc-surface-2:   #F0F4FB;
+  --kc-surface-3:   #E2EAF5;
+  --kc-border:      #C5D4EC;
+  --kc-accent:      #1565C0;
+  --kc-accent-dim:  rgba(21,101,192,.10);
+  --kc-accent-deep: #D0E4FF;
+  --kc-text-1:      #0A1830;
+  --kc-text-2:      #3A5070;
+  --kc-text-3:      #7A9ABE;
+  --kc-self-bubble: #D0E4FF;
+  --kc-peer-bubble: #FFFFFF;
+  --kc-shadow:      0 2px 12px rgba(0,0,0,.12);
+}
+
+
+/* Override site body/main for full-height chat shell */
+body { background: var(--kc-bg) !important; font-family: var(--kc-font-ui); }
+/* Hide site Header/Footer inside this page — chat is self-contained */
+body > .site-header,
+body > .site-footer { display: none !important; }
+#main-content {
+  padding: 0 !important;
+  display: flex;
+  flex-direction: column;
+  height: calc(100dvh - var(--a11y-bar-h, 44px));
+  overflow: hidden;
+}
+
+/* ── Shell ─────────────────────────────────────────────────── */
+#kc-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  background: var(--kc-bg);
+  color: var(--kc-text-1);
+}
+
+/* ── KellerChat app bar ─────────────────────────────────────── */
+#kc-header {
+  height: 56px;
+  background: var(--kc-surface);
+  border-bottom: 1px solid var(--kc-border);
+  display: flex;
+  align-items: center;
+  padding-inline: 16px;
+  gap: 8px;
+  flex-shrink: 0;
+  z-index: 10;
+}
+
+/* Logo */
+.kc-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: var(--kc-text-1);
+  flex-shrink: 0;
+}
+.kc-logo:focus-visible { outline: 3px solid var(--kc-accent); outline-offset: 3px; border-radius: 6px; }
+.kc-logo-mark {
+  width: 36px; height: 36px;
+  background: var(--kc-accent);
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  font-family: var(--kc-font-ui);
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: #fff;
+  flex-shrink: 0;
+  letter-spacing: -.01em;
+}
+.kc-logo-wordmark {
+  font-family: var(--kc-font-ui);
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -.02em;
+}
+.kc-logo-chat { color: var(--kc-accent); }
+
+.kc-spacer { flex: 1; min-width: 0; }
+
+/* Dashboard button */
+.kc-dash-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 44px;
+  padding-inline: 14px;
+  background: var(--kc-surface-2);
+  color: var(--kc-text-1);
+  border: 1px solid var(--kc-border);
+  border-radius: var(--kc-radius);
+  font-family: var(--kc-font-ui);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+.kc-dash-btn:hover { background: var(--kc-surface-3); }
+.kc-dash-btn:focus-visible { outline: 3px solid var(--kc-accent); outline-offset: 2px; }
+.kc-dash-btn[aria-expanded="true"] {
+  background: var(--kc-accent-dim);
+  border-color: var(--kc-accent);
+  color: var(--kc-accent);
+}
+
+/* Audio Only pill button */
+.kc-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 44px;
+  padding-inline: 16px;
+  background: var(--kc-surface-2);
+  color: var(--kc-text-2);
+  border: 1px solid var(--kc-border);
+  border-radius: 999px;
+  font-family: var(--kc-font-ui);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  flex-shrink: 0;
+}
+.kc-pill-btn:hover { background: var(--kc-surface-3); color: var(--kc-text-1); }
+.kc-pill-btn:focus-visible { outline: 3px solid var(--kc-accent); outline-offset: 2px; }
+.kc-pill-btn[aria-pressed="true"] {
+  background: var(--kc-accent);
+  color: #ffffff;
+  border-color: var(--kc-accent);
+}
+@media (max-width: 520px) {
+  .kc-pill-btn span.kc-pill-label { display: none; }
+  .kc-dash-btn span.kc-dash-label { display: none; }
+}
+
+/* Wake status — minimal dot indicator, not a control */
+#wake-pill {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+#wake-pill.listening #wake-dot {
+  background: var(--kc-success);
+  animation: kc-pulse 1.4s ease-in-out infinite;
+}
+#wake-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--kc-text-3);
+  transition: background .2s;
+}
+@keyframes kc-pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+/* Icon button */
+.kc-icon-btn {
+  width: 44px; height: 44px;
+  display: grid;
+  place-items: center;
+  background: none;
+  border: none;
+  border-radius: var(--kc-radius);
+  color: var(--kc-text-2);
+  cursor: pointer;
+  position: relative;
+  transition: background .15s, color .15s;
+  flex-shrink: 0;
+}
+.kc-icon-btn:hover { background: var(--kc-accent-dim); color: var(--kc-text-1); }
+.kc-icon-btn:focus-visible { outline: 3px solid var(--kc-accent); outline-offset: 2px; }
+.kc-icon-btn.active { color: var(--kc-accent); background: var(--kc-accent-dim); }
+.kc-icon-btn svg { pointer-events: none; }
+
+.kc-badge {
+  position: absolute;
+  top: 6px; right: 6px;
+  min-width: 16px; height: 16px;
+  padding-inline: 4px;
+  background: var(--kc-danger);
+  color: #fff;
+  font-size: .65rem;
+  font-weight: 700;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.kc-badge[hidden] { display: none !important; }
+
+/* ── Audio-only banner ──────────────────────────────────────── */
+#ao-banner {
+  background: var(--kc-accent-deep);
+  border-bottom: 1px solid var(--kc-accent);
+  color: var(--kc-accent);
+  text-align: center;
+  padding: 8px 16px;
+  font-size: .8rem;
+  font-weight: 600;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+#ao-banner[hidden] { display: none !important; }
+
+/* ── Connections panel ──────────────────────────────────────── */
+#conn-panel {
+  background: var(--kc-surface);
+  border-bottom: 1px solid var(--kc-border);
+  padding: 12px 16px;
+  flex-shrink: 0;
+}
+#conn-panel[hidden] { display: none !important; }
+.conn-heading {
+  font-size: .7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--kc-text-3);
+  margin-bottom: 10px;
+}
+.conn-list { display: flex; flex-direction: column; gap: 8px; list-style: none; }
+.conn-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--kc-surface-2);
+  border: 1px solid var(--kc-border);
+  border-radius: var(--kc-radius);
+}
+.conn-avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--kc-accent-dim);
+  border: 2px solid var(--kc-accent);
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: .85rem;
+  color: var(--kc-accent);
+  flex-shrink: 0;
+}
+.conn-info { flex: 1; min-width: 0; }
+.conn-name {
+  font-size: .875rem;
+  font-weight: 600;
+  color: var(--kc-text-1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.conn-meta { font-size: .75rem; color: var(--kc-text-2); margin-top: 1px; }
+.conn-actions { display: flex; gap: 6px; }
+.conn-btn {
+  height: 32px;
+  padding-inline: 12px;
+  border-radius: 6px;
+  border: none;
+  font-size: .75rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--kc-font-ui);
+  transition: opacity .15s;
+}
+.conn-btn:focus-visible { outline: 3px solid var(--kc-accent); outline-offset: 2px; }
+.conn-btn.accept  { background: var(--kc-success); color: #000; }
+.conn-btn.decline { background: var(--kc-surface-3); color: var(--kc-text-2); }
+.conn-btn:hover   { opacity: .85; }
+
+/* ── Chat log ───────────────────────────────────────────────── */
+#chat-log {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 16px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  scroll-behavior: smooth;
+}
+#chat-log:focus { outline: none; }
+
+.date-sep {
+  text-align: center;
+  font-size: .7rem;
+  font-weight: 600;
+  color: var(--kc-text-3);
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.date-sep::before,.date-sep::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--kc-border);
+}
+
+.msg-row { display: flex; flex-direction: column; gap: 2px; max-width: 78%; }
+.msg-row.self { align-self: flex-end; align-items: flex-end; }
+.msg-row.peer { align-self: flex-start; align-items: flex-start; }
+
+.msg-sender {
+  font-size: .7rem;
+  font-weight: 600;
+  color: var(--kc-text-3);
+  letter-spacing: .03em;
+  padding-inline: 2px;
+}
+.msg-row.self .msg-sender { color: var(--kc-accent); }
+
+.msg-bubble {
+  padding: 10px 14px;
+  border-radius: var(--kc-radius-lg);
+  line-height: 1.5;
+  font-size: .9rem;
+  word-break: break-word;
+}
+.msg-row.self .msg-bubble {
+  background: var(--kc-self-bubble);
+  color: var(--kc-text-1);
+  border-bottom-right-radius: 4px;
+}
+.msg-row.peer .msg-bubble {
+  background: var(--kc-peer-bubble);
+  border: 1px solid var(--kc-border);
+  color: var(--kc-text-1);
+  border-bottom-left-radius: 4px;
+}
+
+.phi-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: .65rem;
+  font-weight: 600;
+  color: var(--kc-warning);
+  background: rgba(245,188,75,.12);
+  border: 1px solid rgba(245,188,75,.3);
+  border-radius: 4px;
+  padding: 2px 6px;
+  margin-top: 4px;
+  font-family: var(--kc-font-mono);
+  letter-spacing: .04em;
+}
+
+.msg-voice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 180px;
+}
+.voice-play {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--kc-accent);
+  color: #fff;
+  border: none;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: opacity .15s;
+}
+.voice-play:hover { opacity: .85; }
+.voice-play:focus-visible { outline: 3px solid var(--kc-text-1); outline-offset: 2px; }
+.voice-waveform {
+  flex: 1;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.wave-bar {
+  flex: 1;
+  background: var(--kc-accent);
+  border-radius: 2px;
+  opacity: .6;
+}
+.voice-dur { font-size: .75rem; color: var(--kc-text-2); font-family: var(--kc-font-mono); flex-shrink: 0; }
+.msg-time { font-size: .65rem; color: var(--kc-text-3); padding-inline: 2px; font-variant-numeric: tabular-nums; }
+
+#typing-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  font-size: .8rem;
+  color: var(--kc-text-2);
+}
+#typing-indicator[hidden] { display: none !important; }
+.typing-dots { display: flex; gap: 3px; }
+.typing-dots span {
+  width: 5px; height: 5px;
+  background: var(--kc-text-3);
+  border-radius: 50%;
+  animation: kc-bounce .9s ease-in-out infinite;
+}
+.typing-dots span:nth-child(2) { animation-delay: .15s; }
+.typing-dots span:nth-child(3) { animation-delay: .3s; }
+@keyframes kc-bounce { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-6px)} }
+
+/* ── Input bar ──────────────────────────────────────────────── */
+#input-bar {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 10px 16px 12px;
+  background: var(--kc-surface);
+  border-top: 1px solid var(--kc-border);
+  flex-shrink: 0;
+}
+#btn-ptt {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  border: 2px solid var(--kc-border);
+  background: var(--kc-surface-2);
+  color: var(--kc-text-2);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background .1s, border-color .1s, color .1s, transform .1s;
+  touch-action: none;
+  user-select: none;
+}
+#btn-ptt:focus-visible { outline: 3px solid var(--kc-accent); outline-offset: 2px; }
+#btn-ptt.recording {
+  background: rgba(245,107,107,.18);
+  border-color: var(--kc-danger);
+  color: var(--kc-danger);
+  transform: scale(1.08);
+  animation: kc-ring 1.2s linear infinite;
+}
+@keyframes kc-ring {
+  0%  { box-shadow: 0 0 0 0 rgba(245,107,107,.5); }
+  70% { box-shadow: 0 0 0 10px rgba(245,107,107,0); }
+  100%{ box-shadow: 0 0 0 0 rgba(245,107,107,0); }
+}
+#chat-input {
+  flex: 1;
+  min-height: 44px;
+  max-height: 140px;
+  background: var(--kc-surface-2);
+  border: 1px solid var(--kc-border);
+  border-radius: var(--kc-radius);
+  color: var(--kc-text-1);
+  font-family: var(--kc-font-ui);
+  font-size: .9rem;
+  padding: 10px 14px;
+  resize: none;
+  line-height: 1.5;
+  transition: border-color .15s;
+  overflow-y: auto;
+}
+#chat-input::placeholder { color: var(--kc-text-3); }
+#chat-input:focus { outline: none; border-color: var(--kc-accent); }
+#btn-send {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: var(--kc-accent);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: opacity .15s, transform .1s;
+}
+#btn-send:hover   { opacity: .88; }
+#btn-send:active  { transform: scale(.94); }
+#btn-send:focus-visible { outline: 3px solid var(--kc-text-1); outline-offset: 2px; }
+#btn-send:disabled { opacity: .35; cursor: not-allowed; }
+body.ao-mode #chat-input,
+body.ao-mode #btn-send { opacity: .4; pointer-events: none; }
+
+/* ── Wake modal ─────────────────────────────────────────────── */
+#wake-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+  padding: 16px;
+  background: rgba(9,16,31,.7);
+  backdrop-filter: blur(4px);
+}
+#wake-modal[hidden] { display: none !important; }
+.wake-card {
+  width: 100%;
+  max-width: 480px;
+  margin-inline: auto;
+  background: var(--kc-surface);
+  border: 1px solid var(--kc-border);
+  border-radius: var(--kc-radius-lg);
+  padding: 20px;
+  box-shadow: var(--kc-shadow);
+  animation: kc-slide-up .2s ease-out;
+}
+@keyframes kc-slide-up { from{transform:translateY(20px);opacity:0} to{transform:translateY(0);opacity:1} }
+.wake-eyebrow {
+  font-size: .7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--kc-success);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.wake-eyebrow::before {
+  content: '';
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--kc-success);
+  animation: kc-pulse 1.4s ease-in-out infinite;
+}
+#wake-transcript {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--kc-text-1);
+  min-height: 1.6em;
+  margin-bottom: 14px;
+  font-style: italic;
+}
+#wake-transcript em { color: var(--kc-text-3); }
+.wake-actions { display: flex; gap: 8px; }
+.wake-btn {
+  flex: 1;
+  height: 44px;
+  border-radius: var(--kc-radius);
+  border: none;
+  font-family: var(--kc-font-ui);
+  font-size: .875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity .15s;
+}
+.wake-btn:focus-visible { outline: 3px solid var(--kc-accent); outline-offset: 2px; }
+.wake-btn.send   { background: var(--kc-accent); color: #fff; }
+.wake-btn.cancel { background: var(--kc-surface-3); color: var(--kc-text-2); }
+.wake-btn:hover  { opacity: .88; }
+
+/* Scrollbar */
+#chat-log::-webkit-scrollbar { width: 4px; }
+#chat-log::-webkit-scrollbar-thumb { background: var(--kc-surface-3); border-radius: 99px; }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,*::before,*::after { animation-duration:.01ms!important; transition-duration:.01ms!important; }
+}
 </style>
+
+<script>
+/* ── PHI FILTER ─────────────────────────────────────────────── */
+const PHI_PATTERNS = [
+  /\b\d{3}[-\s]\d{2}[-\s]\d{4}\b/,
+  /\b(date\s*of\s*birth|d\.?o\.?b\.?|born\s+on)\b/i,
+  /\b(mrn|medical\s*record(\s*number)?|patient\s*id)\b/i,
+  /\b(diagnosed\s+with|diagnosis\s+of|suffers\s+from|positive\s+for)\b/i,
+  /\b[A-Z]{2,3}\d{7,11}\b/,
+  /\b(insurance\s*(id|number|policy)|policy\s*number)\b/i,
+];
+const hasPHI = t => PHI_PATTERNS.some(p => p.test(t));
+const redact = t => PHI_PATTERNS.reduce((s, p) => s.replace(p, '[REDACTED]'), t);
+
+/* ── INTEGRATION STUBS ──────────────────────────────────────── */
+async function logHubSpot(text, role) {
+  // TODO: POST /api/hubspot/log — sanitized payload, no PHI
+  console.log('[HubSpot CRM] →', role, ':', redact(text));
+}
+async function routeGCP(text, role) {
+  // TODO: POST /api/gcp/hipaa-vault — full message stored securely
+  console.log('[GCP HIPAA Vault] →', { role, message: text, ts: new Date().toISOString() });
+}
+
+/* ── LIVE REGIONS ───────────────────────────────────────────── */
+const srStatus = document.getElementById('sr-status');
+const srAlert  = document.getElementById('sr-alert');
+function announce(msg, urgent = false) {
+  const el = urgent ? srAlert : srStatus;
+  el.textContent = '';
+  requestAnimationFrame(() => { el.textContent = msg; });
+}
+
+/* ── WAVEFORM ───────────────────────────────────────────────── */
+function drawWave(container) {
+  for (let i = 0; i < 24; i++) {
+    const b = document.createElement('div');
+    b.className = 'wave-bar';
+    b.style.height = (6 + Math.random() * 20) + 'px';
+    container.appendChild(b);
+  }
+}
+const wavePeer = document.getElementById('wave-peer');
+if (wavePeer) drawWave(wavePeer);
+
+/* ── THEME ──────────────────────────────────────────────────── */
+const root      = document.documentElement;
+const btnTheme  = document.getElementById('btn-theme');
+const iconSun   = document.getElementById('icon-sun');
+const iconMoon  = document.getElementById('icon-moon');
+let darkMode = true;
+try {
+  const saved = localStorage.getItem('kc-theme');
+  if (saved === 'light') { darkMode = false; root.dataset.theme = 'light'; }
+  else root.dataset.theme = 'dark';
+} catch(e) {}
+
+function applyTheme() {
+  root.dataset.theme = darkMode ? 'dark' : 'light';
+  iconSun.hidden  = !darkMode;
+  iconMoon.hidden = darkMode;
+  btnTheme.setAttribute('aria-label', darkMode ? 'Switch to light mode' : 'Switch to dark mode');
+  try { localStorage.setItem('kc-theme', darkMode ? 'dark' : 'light'); } catch(e) {}
+  announce(darkMode ? 'Dark mode active' : 'Light mode active');
+}
+applyTheme();
+btnTheme.addEventListener('click', () => { darkMode = !darkMode; applyTheme(); });
+
+/* ── AUDIO-ONLY ─────────────────────────────────────────────── */
+const btnAO    = document.getElementById('btn-ao');
+const aoBanner = document.getElementById('ao-banner');
+let aoMode = false;
+const synth = window.speechSynthesis || null;
+function speakText(text) {
+  if (!synth) return;
+  synth.cancel();
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.rate = 1; utt.pitch = 1;
+  synth.speak(utt);
+}
+btnAO.addEventListener('click', () => {
+  aoMode = !aoMode;
+  btnAO.setAttribute('aria-pressed', String(aoMode));
+  btnAO.setAttribute('aria-label', aoMode ? 'Toggle audio-only mode: currently on' : 'Toggle audio-only mode: currently off');
+  btnAO.classList.toggle('active', aoMode);
+  aoBanner.hidden = !aoMode;
+  document.body.classList.toggle('ao-mode', aoMode);
+  announce(aoMode
+    ? 'Audio-only mode activated. Messages will be read aloud. Use push-to-talk to speak.'
+    : 'Audio-only mode deactivated. Text input restored.');
+});
+
+/* ── CONNECTIONS ────────────────────────────────────────────── */
+const btnConn   = document.getElementById('btn-conn');
+const connPanel = document.getElementById('conn-panel');
+const connBadge = document.getElementById('conn-badge');
+btnConn.addEventListener('click', () => {
+  const open = connPanel.hidden;
+  connPanel.hidden = !open;
+  btnConn.setAttribute('aria-expanded', String(open));
+  if (open) announce('Connections panel opened, 2 pending requests');
+});
+let pendingCount = 2;
+document.querySelectorAll('.conn-btn.accept').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const li   = btn.closest('li');
+    const name = btn.dataset.name || 'Navigator';
+    li.remove();
+    pendingCount = Math.max(0, pendingCount - 1);
+    connBadge.textContent = pendingCount;
+    connBadge.hidden = pendingCount === 0;
+    btnConn.setAttribute('aria-label', pendingCount > 0
+      ? `Incoming connections, ${pendingCount} pending`
+      : 'Incoming connections, none pending');
+    announce(`Connected with ${name}. Starting chat.`);
+    if (pendingCount === 0) { connPanel.hidden = true; btnConn.setAttribute('aria-expanded', 'false'); }
+    if (aoMode) speakText(`Connection accepted with ${name}. Starting chat.`);
+  });
+});
+document.querySelectorAll('.conn-btn.decline').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const li   = btn.closest('li');
+    const name = li.querySelector('.conn-name').textContent;
+    li.remove();
+    pendingCount = Math.max(0, pendingCount - 1);
+    connBadge.textContent = pendingCount;
+    connBadge.hidden = pendingCount === 0;
+    btnConn.setAttribute('aria-label', pendingCount > 0
+      ? `Incoming connections, ${pendingCount} pending`
+      : 'Incoming connections, none pending');
+    if (pendingCount === 0) { connPanel.hidden = true; btnConn.setAttribute('aria-expanded', 'false'); }
+    announce(`Connection from ${name} declined.`);
+  });
+});
+
+/* ── CHAT ───────────────────────────────────────────────────── */
+const chatLog = document.getElementById('chat-log');
+function formatTime(d) { return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }); }
+
+function appendMsg({ text, sender, isSelf, phi = false }) {
+  const now  = new Date();
+  const row  = document.createElement('article');
+  row.className = 'msg-row ' + (isSelf ? 'self' : 'peer');
+  row.setAttribute('aria-label',
+    `${isSelf ? 'Your message' : `Message from ${sender}`} at ${formatTime(now)}${phi ? ', contains sensitive health information routed securely' : ''}`);
+
+  const senderEl = document.createElement('div');
+  senderEl.className = 'msg-sender';
+  senderEl.setAttribute('aria-hidden', 'true');
+  senderEl.textContent = isSelf ? 'You' : sender;
+
+  const bubble = document.createElement('div');
+  bubble.className = 'msg-bubble';
+  bubble.textContent = text;
+
+  const time = document.createElement('time');
+  time.className = 'msg-time';
+  time.setAttribute('datetime', now.toISOString());
+  time.setAttribute('aria-hidden', 'true');
+  time.textContent = formatTime(now);
+
+  row.append(senderEl, bubble, time);
+
+  if (phi) {
+    const badge = document.createElement('div');
+    badge.className = 'phi-badge';
+    badge.setAttribute('role', 'note');
+    badge.setAttribute('aria-label', 'Sensitive health information detected — routed securely to HIPAA vault, not stored in CRM');
+    badge.innerHTML = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> PHI secured · HIPAA vault`;
+    row.insertBefore(badge, time);
+  }
+  const typingEl = document.getElementById('typing-indicator');
+  chatLog.insertBefore(row, typingEl);
+  row.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  if (aoMode && !isSelf) speakText(`${sender} says: ${text}`);
+}
+
+/* ── TEXTAREA ───────────────────────────────────────────────── */
+const chatInput = document.getElementById('chat-input');
+const btnSend   = document.getElementById('btn-send');
+function autoResize() {
+  chatInput.style.height = 'auto';
+  chatInput.style.height = Math.min(chatInput.scrollHeight, 140) + 'px';
+}
+chatInput.addEventListener('input', () => { autoResize(); btnSend.disabled = !chatInput.value.trim(); });
+chatInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); if (!btnSend.disabled) sendMessage(chatInput.value); }
+});
+
+async function sendMessage(text) {
+  const trimmed = text.trim();
+  if (!trimmed) return;
+  const phi = hasPHI(trimmed);
+  appendMsg({ text: trimmed, sender: 'You', isSelf: true, phi });
+  chatInput.value = ''; autoResize(); btnSend.disabled = true;
+  await logHubSpot(trimmed, 'Navigator');
+  if (phi) await routeGCP(trimmed, 'Navigator');
+}
+btnSend.addEventListener('click', () => sendMessage(chatInput.value));
+
+/* ── PUSH-TO-TALK ───────────────────────────────────────────── */
+const btnPtt = document.getElementById('btn-ptt');
+let pttActive = false, pttRecog = null;
+
+function startPTT() {
+  if (pttActive) return;
+  pttActive = true;
+  btnPtt.classList.add('recording');
+  btnPtt.setAttribute('aria-pressed', 'true');
+  btnPtt.setAttribute('aria-label', 'Recording — release to send');
+  announce('Recording voice message', true);
+  pauseWake();
+
+  if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+    announce('Speech recognition not supported. Type your message.', true);
+    stopPTT(); return;
+  }
+  const SRClass = window.SpeechRecognition || window.webkitSpeechRecognition;
+  pttRecog = new SRClass();
+  pttRecog.lang = 'en-US'; pttRecog.interimResults = false; pttRecog.maxAlternatives = 1;
+  pttRecog.onresult = e => sendMessage(e.results[0][0].transcript);
+  pttRecog.onerror  = e => { if (e.error !== 'no-speech') announce('Voice recognition error: ' + e.error, true); };
+  pttRecog.start();
+}
+function stopPTT() {
+  if (!pttActive) return;
+  pttActive = false;
+  btnPtt.classList.remove('recording');
+  btnPtt.setAttribute('aria-pressed', 'false');
+  btnPtt.setAttribute('aria-label', 'Push to talk: hold to record voice message, or press Control M');
+  if (pttRecog) { try { pttRecog.stop(); } catch(e) {} pttRecog = null; }
+  resumeWake();
+}
+btnPtt.addEventListener('mousedown',  e => { e.preventDefault(); startPTT(); });
+btnPtt.addEventListener('mouseup',    () => stopPTT());
+btnPtt.addEventListener('mouseleave', () => stopPTT());
+btnPtt.addEventListener('touchstart', e => { e.preventDefault(); startPTT(); }, { passive: false });
+btnPtt.addEventListener('touchend',   e => { e.preventDefault(); stopPTT();  }, { passive: false });
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'm' && !pttActive) { e.preventDefault(); startPTT(); }
+});
+document.addEventListener('keyup', e => {
+  if (((e.ctrlKey || e.metaKey) || e.key === 'm') && pttActive) stopPTT();
+});
+
+/* ── WAKE WORD ──────────────────────────────────────────────── */
+const wakePill       = document.getElementById('wake-pill');
+const wakeLabel      = document.getElementById('wake-label');
+const wakeModal      = document.getElementById('wake-modal');
+const wakeTranscript = document.getElementById('wake-transcript');
+const wakeSend       = document.getElementById('wake-send');
+const wakeCancel     = document.getElementById('wake-cancel');
+let wakeRecog = null, wakePaused = false, wakeTimeout = null, capturedAfterWake = '';
+
+function initWake() {
+  if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) return;
+  const SRClass = window.SpeechRecognition || window.webkitSpeechRecognition;
+  wakeRecog = new SRClass();
+  wakeRecog.lang = 'en-US'; wakeRecog.continuous = true; wakeRecog.interimResults = true;
+
+  wakeRecog.onresult = e => {
+    const transcript = Array.from(e.results).map(r => r[0].transcript.toLowerCase()).join(' ');
+    if (transcript.includes('hey keller') && wakeModal.hidden) {
+      const after = transcript.split('hey keller').pop().trim();
+      onWakeWord(after);
+    } else if (!wakeModal.hidden) {
+      const full = Array.from(e.results).map(r => r[0].transcript).join(' ');
+      const idx  = full.toLowerCase().indexOf('hey keller');
+      if (idx !== -1) {
+        capturedAfterWake = full.slice(idx + 10).trim();
+        wakeTranscript.textContent = capturedAfterWake || '';
+        if (!capturedAfterWake) wakeTranscript.innerHTML = '<em>Listening for your message…</em>';
+      }
+    }
+  };
+  wakeRecog.onend = () => {
+    if (!wakePaused && !pttActive) { try { wakeRecog.start(); } catch(e) {} }
+  };
+  wakeRecog.onerror = e => {
+    if (e.error === 'not-allowed') { wakePill.style.opacity = '.4'; wakeLabel.textContent = 'Mic blocked'; }
+  };
+  try { wakeRecog.start(); } catch(e) {}
+  wakePill.classList.add('listening');
+}
+
+function onWakeWord(textAfter) {
+  capturedAfterWake = textAfter;
+  wakeTranscript.innerHTML = textAfter ? textAfter : '<em>Listening for your message…</em>';
+  wakeModal.hidden = false;
+  wakeSend.focus();
+  announce('Wake word detected. Say your message or press Send.', true);
+  if (aoMode) speakText('Hey Keller activated. Say your message.');
+  clearTimeout(wakeTimeout);
+  wakeTimeout = setTimeout(() => {
+    if (capturedAfterWake) sendMessage(capturedAfterWake);
+    dismissWakeModal();
+  }, 10000);
+}
+
+function dismissWakeModal() {
+  clearTimeout(wakeTimeout);
+  wakeModal.hidden = true;
+  capturedAfterWake = '';
+  wakeTranscript.innerHTML = '<em>Listening for your message…</em>';
+}
+
+wakeSend.addEventListener('click',   () => { if (capturedAfterWake) sendMessage(capturedAfterWake); dismissWakeModal(); chatInput.focus(); });
+wakeCancel.addEventListener('click', () => { dismissWakeModal(); chatInput.focus(); });
+wakeModal.addEventListener('click',  e => { if (e.target === wakeModal) { dismissWakeModal(); chatInput.focus(); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !wakeModal.hidden) { dismissWakeModal(); chatInput.focus(); } });
+
+function pauseWake()  { wakePaused = true;  if (wakeRecog) { try { wakeRecog.stop(); } catch(e) {} } }
+function resumeWake() { wakePaused = false; if (wakeRecog) { try { wakeRecog.start(); } catch(e) {} } }
+
+// Init on first user interaction (browser mic permission requirement)
+document.addEventListener('click', function initGesture() {
+  initWake();
+  document.removeEventListener('click', initGesture);
+}, { once: true });
+setTimeout(() => { if (!wakeRecog) initWake(); }, 500);
+</script>

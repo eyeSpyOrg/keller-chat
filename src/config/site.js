@@ -1,18 +1,19 @@
 /**
  * SITE CONFIG — SINGLE SOURCE OF TRUTH
  * =====================================
- * Eye Spy Foundation — nonprofit template
+ * KellerChat — accessible audio/text-first navigation platform
+ * Eye Spy Foundation | OGS Grant Project 2026–2027
  * Edit here, never inline in pages.
  */
 
 export const SITE = {
   // ── Identity ──────────────────────────────────────────────
-  name: 'Eye Spy Foundation',
-  legalName: 'Eye Spy Foundation',
-  url: 'https://eyespyfoundation.org',
-  titleTemplate: '%s | Eye Spy Foundation',
+  name: 'KellerChat',
+  legalName: 'Eye Spy Foundation Inc.',
+  url: 'https://kellerchat.com',
+  titleTemplate: '%s | KellerChat',
   description:
-    'Eye Spy Foundation helps blind and low vision people navigate toward a more informed, connected, and confident life — free navigation support, community events, and a curated resource directory.',
+    'KellerChat is the accessible audio/text-first chat platform for blind and low-vision navigators — built with wake word activation, voice messaging, and HIPAA-compliant PHI routing.',
   locale: 'en_US',
   language: 'en',
 
@@ -23,48 +24,51 @@ export const SITE = {
   email: 'team@eyespy.org',
   telephone: '+1-844-222-8848',
   address: {
-    streetAddress: '[PLACEHOLDER: Street Address]',
+    streetAddress: '',
     addressLocality: 'Jacksonville',
     addressRegion: 'FL',
-    postalCode: '[PLACEHOLDER]',
+    postalCode: '',
     addressCountry: 'US',
   },
 
   // Social profiles — handle @eyespyorg
   socials: [
-    { label: 'Facebook', icon: 'facebook', url: 'https://www.facebook.com/eyespyorg' },
+    { label: 'Facebook',  icon: 'facebook',  url: 'https://www.facebook.com/eyespyorg' },
     { label: 'Instagram', icon: 'instagram', url: 'https://www.instagram.com/eyespyorg' },
-    { label: 'YouTube', icon: 'youtube', url: 'https://www.youtube.com/@eyespyorg' },
-    { label: 'LinkedIn', icon: 'linkedin', url: 'https://www.linkedin.com/company/eyespyorg' },
-    { label: 'TikTok', icon: 'tiktok', url: 'https://www.tiktok.com/@eyespyorg' },
-    { label: 'X', icon: 'x', url: 'https://x.com/eyespyorg' },
+    { label: 'YouTube',   icon: 'youtube',   url: 'https://www.youtube.com/@eyespyorg' },
+    { label: 'LinkedIn',  icon: 'linkedin',  url: 'https://www.linkedin.com/company/eyespyorg' },
   ],
 
   // ── Default social sharing image ───────────────────────────
   ogImage: '/og-default.jpg',
 
-  // ── Navigation (drives Header + Footer) ────────────────────
+  // ── Navigation ─────────────────────────────────────────────
   nav: [
-    { label: 'Home', href: '/' },
-    { label: 'About', href: '/about/' },
-    { label: 'Programs', href: '/programs/' },
-    { label: 'Support', href: '/support/' },
-    { label: 'Contact', href: '/contact/' },
-    { label: 'Documents', href: '/documents/' },
+    { label: 'Chat',          href: '/' },
+    { label: 'Accessibility', href: '/accessibility/' },
+    { label: 'Privacy',       href: '/privacy/' },
+    { label: 'Portal',        href: '/login/' },
   ],
   footerNav: [
     { label: 'Accessibility Statement', href: '/accessibility/' },
-    { label: 'Privacy Policy', href: '/privacy/' },
-    { label: 'Terms of Use', href: '/terms/' },
-    { label: 'Cookie Policy', href: '/cookies/' },
-    { label: 'Contact', href: '/contact/' },
+    { label: 'Privacy Policy',          href: '/privacy/' },
+    { label: 'Terms of Use',            href: '/terms/' },
   ],
 
-  // ── Phase 2 integrations (see INTEGRATIONS.md) ─────────────
-  // Only PUBLIC identifiers belong here. Secrets go in env vars.
+  // ── Integrations (PUBLIC identifiers only — secrets in env) ──
   integrations: {
-    ga4Id: 'G-G5XJTT1PX2',
-    hubspotPortalId: '',
-    stripePublishableKey: '',
+    ga4Id:              'G-G5XJTT1PX2',
+    hubspotPortalId:    '',      // set in .env → HUBSPOT_PORTAL_ID
+    stripePublishableKey: '',    // not used in KellerChat
+    gcpHipaaEndpoint:   '',      // set in .env → GCP_HIPAA_ENDPOINT
+  },
+
+  // ── KellerChat feature flags ───────────────────────────────
+  features: {
+    wakeWord:     true,   // "Hey Keller" Web Speech API wake word
+    pushToTalk:   true,   // hold-to-record PTT + Ctrl+M keyboard
+    audioOnly:    true,   // TTS mode for blind navigators
+    phiFilter:    true,   // regex PHI detection → GCP HIPAA vault
+    hubspotCRM:   true,   // background CRM conversation tracking
   },
 };

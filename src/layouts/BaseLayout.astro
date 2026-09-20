@@ -31,8 +31,9 @@ interface Props {
   image?: string;
   type?: string;
   noindex?: boolean;
+  chatMode?: boolean;
 }
-const { title, description, image, type, noindex } = Astro.props;
+const { title, description, image, type, noindex, chatMode } = Astro.props;
 ---
 
 <!doctype html>
@@ -67,12 +68,12 @@ const { title, description, image, type, noindex } = Astro.props;
   </head>
   <body>
     <SkipLink />
-    <Header />
+    <AccessibilityBar />
+    <Header hideFromChat={chatMode} />
     <main id="main-content" tabindex="-1">
       <slot />
     </main>
-    <Footer />
-    <AccessibilityBar />
+    <Footer hideFromChat={chatMode} />
     <ConsentBanner />
   </body>
 </html>

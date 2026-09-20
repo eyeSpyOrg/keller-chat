@@ -7,12 +7,17 @@
  */
 import { SITE } from '../config/site.js';
 
+interface Props {
+  hideFromChat?: boolean;
+}
+const { hideFromChat } = Astro.props;
+
 const currentPath = Astro.url.pathname;
 const isActive = (href: string) =>
   href === '/' ? currentPath === '/' : currentPath.startsWith(href);
 ---
 
-<header class="site-header">
+<header class="site-header" aria-hidden={hideFromChat ? 'true' : undefined}>
   <div class="site-header__inner">
     <a href="/" class="site-header__brand" aria-label={`${SITE.name} — home`}>
       <!-- PLACEHOLDER: Replace this SVG with the real ESF logo before launch.

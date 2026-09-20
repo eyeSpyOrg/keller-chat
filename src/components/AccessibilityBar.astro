@@ -1,202 +1,261 @@
 ---
 /**
- * AccessibilityBar.astro
- * A persistent, keyboard-operable accessibility toolbar:
- *   - Text size (default / large / x-large)
- *   - High contrast theme
- *   - Increased text spacing (WCAG 1.4.12)
- *   - Reduce motion
- *   - Always-underline links
+ * AccessibilityBar.astro — top-of-page horizontal accessibility toolbar
+ * Persistent strip (not a disclosure widget) for immediate access.
+ * Eye Spy design system tokens. WCAG 2.2 AA.
  *
- * Preferences persist in localStorage and are applied pre-paint by
- * an inline script in BaseLayout <head> (no flash of unstyled prefs).
- * The bar itself is a disclosure widget following the WAI-ARIA APG.
+ * Controls:
+ *   Text size  ·  High contrast  ·  Text spacing  ·  Reduce motion
+ *   Underline links  ·  Dyslexia font  ·  Reset
+ *
+ * Prefs persist in localStorage and are applied pre-paint by the
+ * inline script in BaseLayout <head>.
  */
 ---
 
-<div class="a11y-bar" data-a11y-bar>
-  <button
-    type="button"
-    class="a11y-bar__toggle"
-    aria-expanded="false"
-    aria-controls="a11y-panel"
-    aria-label="Accessibility options"
-    title="Accessibility options"
-    data-a11y-toggle
-  >
-    <svg aria-hidden="true" focusable="false" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12 2a2 2 0 1 1 0 4 2 2 0 0 1 0-4Zm9 7h-6v13h-2v-6h-2v6H9V9H3V7h18v2Z"/>
-    </svg>
-  </button>
+<div class="a11y-bar" role="region" aria-label="Accessibility preferences">
+  <div class="a11y-bar__inner">
 
-  <div id="a11y-panel" class="a11y-bar__panel" hidden>
-    <h2 class="a11y-bar__heading">Accessibility options</h2>
+    <span class="a11y-bar__label" aria-hidden="true">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+        <path d="M12 2a2 2 0 1 1 0 4 2 2 0 0 1 0-4Zm9 7h-6v13h-2v-6h-2v6H9V9H3V7h18v2Z"/>
+      </svg>
+      Accessibility
+    </span>
 
-    <fieldset>
-      <legend>Text size</legend>
-      <div class="a11y-bar__group" role="group">
-        <button type="button" data-a11y-set="fontsize" data-value="default" aria-pressed="true">Default</button>
-        <button type="button" data-a11y-set="fontsize" data-value="lg" aria-pressed="false">Large</button>
-        <button type="button" data-a11y-set="fontsize" data-value="xl" aria-pressed="false">Extra large</button>
-      </div>
-    </fieldset>
+    <div class="a11y-bar__sep" aria-hidden="true"></div>
 
-    <fieldset>
-      <legend>Display</legend>
-      <div class="a11y-bar__group">
-        <button type="button" data-a11y-flag="contrast" data-on="high" aria-pressed="false">High contrast</button>
-        <button type="button" data-a11y-flag="spacing" data-on="on" aria-pressed="false">Text spacing</button>
-        <button type="button" data-a11y-flag="motion" data-on="off" aria-pressed="false">Reduce motion</button>
-        <button type="button" data-a11y-flag="links" data-on="underline" aria-pressed="false">Underline links</button>
-        <button type="button" data-a11y-flag="dyslexia" data-on="on" aria-pressed="false">Dyslexia-friendly font</button>
-      </div>
-    </fieldset>
+    <!-- Text size — radio-style group -->
+    <div class="a11y-bar__group" role="group" aria-label="Text size">
+      <button type="button"
+        class="a11y-bar__btn a11y-bar__size-s"
+        data-a11y-set="fontsize" data-value="default"
+        aria-pressed="true"
+        aria-label="Default text size">A</button>
+      <button type="button"
+        class="a11y-bar__btn a11y-bar__size-m"
+        data-a11y-set="fontsize" data-value="lg"
+        aria-pressed="false"
+        aria-label="Large text size">A</button>
+      <button type="button"
+        class="a11y-bar__btn a11y-bar__size-l"
+        data-a11y-set="fontsize" data-value="xl"
+        aria-pressed="false"
+        aria-label="Extra large text size">A</button>
+    </div>
 
-    <button type="button" class="a11y-bar__reset" data-a11y-reset>Reset all</button>
+    <div class="a11y-bar__sep" aria-hidden="true"></div>
+
+    <!-- Display toggles -->
+    <div class="a11y-bar__group" role="group" aria-label="Display options">
+      <button type="button" class="a11y-bar__btn"
+        data-a11y-flag="contrast" data-on="high"
+        aria-pressed="false">High Contrast</button>
+      <button type="button" class="a11y-bar__btn"
+        data-a11y-flag="spacing" data-on="on"
+        aria-pressed="false">Spacing</button>
+      <button type="button" class="a11y-bar__btn"
+        data-a11y-flag="motion" data-on="off"
+        aria-pressed="false">Reduce Motion</button>
+      <button type="button" class="a11y-bar__btn a11y-bar__btn--hide-xs"
+        data-a11y-flag="links" data-on="underline"
+        aria-pressed="false">Underline Links</button>
+      <button type="button" class="a11y-bar__btn a11y-bar__btn--hide-xs"
+        data-a11y-flag="dyslexia" data-on="on"
+        aria-pressed="false">Dyslexia Font</button>
+    </div>
+
+    <div class="a11y-bar__spacer" aria-hidden="true"></div>
+
+    <button type="button" class="a11y-bar__btn a11y-bar__reset" data-a11y-reset>
+      Reset
+    </button>
   </div>
 </div>
 
 <style>
-  .a11y-bar {
-    position: fixed;
-    right: 1rem;
-    bottom: 1rem;
-    z-index: 90;
-    font-size: 1rem;
+  /* ── A11y bar — Eye Spy token system ─────────────────────── */
+  :root {
+    --a11y-bar-h: 44px;
   }
-  .a11y-bar__toggle {
+
+  .a11y-bar {
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    width: 100%;
+    background: var(--color-surface, #F2F2F2);
+    border-bottom: 1px solid var(--color-border, #767676);
+    /* Dark mode */
+    --a11y-bar-bg: var(--color-surface, #F2F2F2);
+    --a11y-bar-text: var(--color-text, #222222);
+    --a11y-bar-btn-bg: transparent;
+    --a11y-bar-btn-hover: rgba(34,34,34,.08);
+    --a11y-bar-btn-active-bg: var(--color-accent, #933001);
+    --a11y-bar-btn-active-text: #ffffff;
+    --a11y-bar-focus: var(--color-focus, #5E7AC3);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .a11y-bar {
+      --a11y-bar-bg: #222222;
+      --a11y-bar-text: #F2F2F2;
+      --a11y-bar-btn-hover: rgba(242,242,242,.10);
+    }
+  }
+  :root[data-theme="dark"] .a11y-bar {
+    --a11y-bar-bg: #222222;
+    --a11y-bar-text: #F2F2F2;
+    --a11y-bar-btn-hover: rgba(242,242,242,.10);
+  }
+  html[data-a11y-contrast="high"] .a11y-bar {
+    background: #000000;
+    --a11y-bar-text: #ffffff;
+    --a11y-bar-btn-active-bg: #ffff00;
+    --a11y-bar-btn-active-text: #000000;
+    border-bottom-color: #ffffff;
+  }
+
+  .a11y-bar__inner {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    height: var(--a11y-bar-h);
+    padding-inline: 1rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    color: var(--a11y-bar-text);
+  }
+  .a11y-bar__inner::-webkit-scrollbar { display: none; }
+
+  .a11y-bar__label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Poppins', system-ui, sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--a11y-bar-text);
+    padding-inline-end: 4px;
+    flex-shrink: 0;
+  }
+
+  .a11y-bar__sep {
+    width: 1px;
+    height: 20px;
+    background: var(--color-border, #767676);
+    flex-shrink: 0;
+    margin-inline: 4px;
+    opacity: 0.5;
+  }
+
+  .a11y-bar__group {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+  }
+
+  .a11y-bar__spacer { flex: 1; min-width: 0.25rem; }
+
+  .a11y-bar__btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 48px;
-    height: 48px;
-    padding: 0;
-    background: var(--color-accent);
-    color: #ffffff;
+    min-height: 32px;
+    min-width: 32px;
+    padding-inline: 10px;
+    background: var(--a11y-bar-btn-bg);
+    color: var(--a11y-bar-text);
     border: 2px solid transparent;
-    border-radius: 50%;
-    box-shadow: 0 2px 8px rgb(0 0 0 / 0.25);
-  }
-  html[data-a11y-contrast='high'] .a11y-bar__toggle {
-    background: var(--color-accent);
-    color: #000000;
-    border-color: #ffffff;
-  }
-  .a11y-bar__panel {
-    position: absolute;
-    bottom: calc(100% + 0.5rem);
-    right: 0;
-    width: min(20rem, calc(100vw - 2rem));
-    background: var(--color-bg);
-    color: var(--color-text);
-    border: 2px solid var(--color-border);
-    border-radius: 12px;
-    padding: 1rem;
-    box-shadow: 0 8px 24px rgb(0 0 0 / 0.2);
+    border-radius: 6px;
     font-family: 'Open Sans', system-ui, sans-serif;
-  }
-  .a11y-bar__heading {
-    font-family: 'Poppins', system-ui, sans-serif;
-    font-size: 1rem;
-    font-weight: 700;
-    margin: 0 0 0.75rem;
-  }
-  .a11y-bar__panel fieldset { border: 0; padding: 0; margin: 0 0 0.75rem; }
-  .a11y-bar__panel legend {
-    font-family: 'Poppins', system-ui, sans-serif;
-    font-weight: 700;
-    padding: 0;
-    margin-bottom: 0.4rem;
-    font-size: 0.875rem;
-  }
-  .a11y-bar__group { display: flex; flex-wrap: wrap; gap: 0.4rem; }
-  .a11y-bar__panel button {
-    background: var(--color-surface);
-    color: var(--color-text);
-    border: 2px solid var(--color-border);
-    border-radius: 8px;
-    padding: 0.5rem 0.75rem;
-    font-family: 'Open Sans', system-ui, sans-serif;
+    font-size: 0.8125rem;
     font-weight: 600;
-    font-size: 0.875rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.12s, color 0.12s, border-color 0.12s;
+    /* Ensure 44px tall touch target via padding compensation */
+    padding-block: 6px;
+    touch-action: manipulation;
   }
-  .a11y-bar__panel button[aria-pressed='true'] {
-    background: var(--color-accent);
-    color: #ffffff;
-    border-color: var(--color-accent);
+
+  /* Text-size buttons scale the letter */
+  .a11y-bar__size-s { font-size: 0.75rem; }
+  .a11y-bar__size-m { font-size: 0.9375rem; }
+  .a11y-bar__size-l { font-size: 1.125rem; line-height: 1; }
+
+  .a11y-bar__btn:hover {
+    background: var(--a11y-bar-btn-hover);
   }
-  html[data-a11y-contrast='high'] .a11y-bar__panel button[aria-pressed='true'] {
+  .a11y-bar__btn:focus-visible {
+    outline: 3px solid var(--a11y-bar-focus);
+    outline-offset: 2px;
+  }
+  .a11y-bar__btn[aria-pressed="true"] {
+    background: var(--a11y-bar-btn-active-bg);
+    color: var(--a11y-bar-btn-active-text);
+    border-color: var(--a11y-bar-btn-active-bg);
+  }
+  html[data-a11y-contrast="high"] .a11y-bar__btn[aria-pressed="true"] {
     color: #000000;
   }
-  .a11y-bar__reset { width: 100%; }
+  .a11y-bar__reset {
+    color: var(--a11y-bar-text);
+    opacity: 0.7;
+    font-size: 0.8125rem;
+  }
+  .a11y-bar__reset:hover { opacity: 1; }
+
+  /* Hide less-critical buttons on very small screens */
+  @media (max-width: 600px) {
+    .a11y-bar__btn--hide-xs { display: none; }
+    .a11y-bar__label span:not(svg) { display: none; }
+  }
 </style>
 
 <script>
-  const PREF_KEYS = ['fontsize', 'contrast', 'spacing', 'motion', 'links', 'dyslexia'] as const;
-  const storageKey = (k: string) => `a11y-pref-${k}`;
   const root = document.documentElement;
+  const storageKey = (k: string) => `a11y-pref-${k}`;
 
   function apply(key: string, value: string | null) {
     if (value && value !== 'default') {
       root.setAttribute(`data-a11y-${key}`, value);
-      localStorage.setItem(storageKey(key), value);
+      try { localStorage.setItem(storageKey(key), value); } catch {}
     } else {
       root.removeAttribute(`data-a11y-${key}`);
-      localStorage.removeItem(storageKey(key));
+      try { localStorage.removeItem(storageKey(key)); } catch {}
     }
     syncButtons();
   }
 
   function syncButtons() {
-    // Font size radio-style group
     document.querySelectorAll<HTMLButtonElement>('[data-a11y-set="fontsize"]').forEach((btn) => {
       const current = root.getAttribute('data-a11y-fontsize') ?? 'default';
       btn.setAttribute('aria-pressed', String(btn.dataset.value === current));
     });
-    // Boolean flags
     document.querySelectorAll<HTMLButtonElement>('[data-a11y-flag]').forEach((btn) => {
       const key = btn.dataset.a11yFlag!;
       btn.setAttribute('aria-pressed', String(root.hasAttribute(`data-a11y-${key}`)));
     });
   }
 
-  function init() {
-    const toggle = document.querySelector<HTMLButtonElement>('[data-a11y-toggle]');
-    const panel = document.getElementById('a11y-panel');
-    if (!toggle || !panel) return;
-
-    toggle.addEventListener('click', () => {
-      const open = toggle.getAttribute('aria-expanded') === 'true';
-      toggle.setAttribute('aria-expanded', String(!open));
-      panel.hidden = open;
-      if (!open) panel.querySelector<HTMLElement>('button')?.focus();
+  document.querySelectorAll<HTMLButtonElement>('[data-a11y-set="fontsize"]').forEach((btn) => {
+    btn.addEventListener('click', () => apply('fontsize', btn.dataset.value ?? 'default'));
+  });
+  document.querySelectorAll<HTMLButtonElement>('[data-a11y-flag]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const key = btn.dataset.a11yFlag!;
+      const isOn = root.hasAttribute(`data-a11y-${key}`);
+      apply(key, isOn ? null : btn.dataset.on!);
     });
+  });
+  document.querySelector('[data-a11y-reset]')?.addEventListener('click', () => {
+    ['fontsize','contrast','spacing','motion','links','dyslexia'].forEach(k => apply(k, null));
+  });
 
-    // Esc closes the panel and returns focus to the toggle
-    panel.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        panel.hidden = true;
-        toggle.setAttribute('aria-expanded', 'false');
-        toggle.focus();
-      }
-    });
-
-    document.querySelectorAll<HTMLButtonElement>('[data-a11y-set="fontsize"]').forEach((btn) => {
-      btn.addEventListener('click', () => apply('fontsize', btn.dataset.value ?? 'default'));
-    });
-    document.querySelectorAll<HTMLButtonElement>('[data-a11y-flag]').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const key = btn.dataset.a11yFlag!;
-        const isOn = root.hasAttribute(`data-a11y-${key}`);
-        apply(key, isOn ? null : btn.dataset.on!);
-      });
-    });
-    document.querySelector('[data-a11y-reset]')?.addEventListener('click', () => {
-      PREF_KEYS.forEach((k) => apply(k, null));
-    });
-
-    syncButtons();
-  }
-
-  init();
+  syncButtons();
 </script>

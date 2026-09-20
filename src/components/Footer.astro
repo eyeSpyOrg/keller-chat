@@ -10,6 +10,12 @@
  * Original Orange (2.9:1 — fails). Each icon-only link carries an aria-label.
  */
 import { SITE } from '../config/site.js';
+
+interface Props {
+  hideFromChat?: boolean;
+}
+const { hideFromChat } = Astro.props;
+
 const year = new Date().getFullYear();
 // Non-breaking hyphens so the phone number never wraps mid-line
 const telDisplay = SITE.telephone.replaceAll('-', '‑');
@@ -25,7 +31,7 @@ const ICONS: Record<string, string> = {
 };
 ---
 
-<footer class="site-footer">
+<footer class="site-footer" aria-hidden={hideFromChat ? 'true' : undefined}>
   <div class="site-footer__inner">
     <div>
       <p class="site-footer__brand">{SITE.name}</p>
