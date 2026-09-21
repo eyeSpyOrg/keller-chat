@@ -36,13 +36,12 @@ import { SITE } from '../config/site.js';
            <img src="/kc-logo.svg" alt="KellerChat" height="36" width="160">
            once /kc-logo.svg is placed in public/ -->
       <a href="/" class="kc-logo" aria-label="KellerChat home">
-        <!-- Placeholder mark shown until /kc-logo.svg exists -->
-        <span class="kc-logo-mark" aria-hidden="true">K</span>
-        <span class="kc-logo-wordmark">Keller<span class="kc-logo-sep" aria-hidden="true"> · </span><span class="kc-logo-chat">Chat</span></span>
+        <img src="/kc-logo-mark.png" alt="" class="kc-logo-img" aria-hidden="true" width="40" height="40">
+        <span class="kc-logo-wordmark">Keller Chat</span>
       </a>
 
       <!-- Wake-word status indicator (screen-reader announced, not a button) -->
-      <div id="wake-pill" aria-live="polite" aria-label="Wake word status: say Hey Keller to activate">
+      <div id="wake-pill" role="status" aria-live="polite" aria-label="Wake word status: say Hey Keller to activate">
         <span id="wake-dot" aria-hidden="true"></span>
         <span id="wake-label" class="sr-only">Ready — say Hey Keller</span>
       </div>
@@ -55,7 +54,7 @@ import { SITE } from '../config/site.js';
           <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
           <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
         </svg>
-        Dashboard
+        <span class="kc-dash-label">Dashboard</span>
         <span class="kc-badge" aria-hidden="true">2</span>
       </a>
 
@@ -68,7 +67,7 @@ import { SITE } from '../config/site.js';
           <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
           <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
         </svg>
-        Audio Only
+        <span class="kc-pill-label">Audio Only</span>
       </button>
 
       <!-- Log in / Log out -->
@@ -210,7 +209,7 @@ import { SITE } from '../config/site.js';
   --kc-burnt:       #933001;
   --kc-text-1:      #EDF1FF;
   --kc-text-2:      #7A95C4;
-  --kc-text-3:      #3F5880;
+  --kc-text-3:      #8FA8CC;
   --kc-success:     #3FD278;
   --kc-warning:     #F5BC4B;
   --kc-danger:      #F56B6B;
@@ -235,7 +234,7 @@ import { SITE } from '../config/site.js';
     --kc-accent-deep: #D6E0F5;
     --kc-text-1:      #0A1830;
     --kc-text-2:      #3A5070;
-    --kc-text-3:      #7A9ABE;
+    --kc-text-3:      #4A6080;
     --kc-self-bubble: #D6E0F5;
     --kc-peer-bubble: #FFFFFF;
     --kc-shadow:      0 2px 12px rgba(0,0,0,.12);
@@ -252,7 +251,7 @@ import { SITE } from '../config/site.js';
   --kc-accent-deep: #D6E0F5;
   --kc-text-1:      #0A1830;
   --kc-text-2:      #3A5070;
-  --kc-text-3:      #7A9ABE;
+  --kc-text-3:      #4A6080;
   --kc-self-bubble: #D6E0F5;
   --kc-peer-bubble: #FFFFFF;
   --kc-shadow:      0 2px 12px rgba(0,0,0,.12);
@@ -305,35 +304,18 @@ import { SITE } from '../config/site.js';
   flex-shrink: 0;
 }
 .kc-logo:focus-visible { outline: 3px solid var(--kc-accent); outline-offset: 3px; border-radius: 6px; }
-.kc-logo-mark {
-  width: 38px; height: 38px;
-  /* Original Orange (#F37121) + Shadow Black: 5.1:1 ✓ */
-  background: var(--kc-orange);
-  border-radius: 8px;
-  display: grid;
-  place-items: center;
-  font-family: var(--kc-font-display);
-  font-weight: 700;
-  font-size: 1.15rem;
-  color: #111111;
+.kc-logo-img {
+  width: 40px; height: 40px;
+  object-fit: contain;
   flex-shrink: 0;
-  letter-spacing: -.01em;
 }
 .kc-logo-wordmark {
   font-family: var(--kc-font-display);
   font-size: 1.05rem;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: -.02em;
+  color: var(--kc-text-1);
 }
-/* "Keller" and "Chat" separated by a thin slash */
-.kc-logo-sep {
-  color: var(--kc-text-3);
-  font-weight: 300;
-  margin-inline: 3px;
-  font-size: 0.9em;
-}
-/* "Chat" in Original Orange — decorative forward accent */
-.kc-logo-chat { color: var(--kc-orange); }
 
 .kc-spacer { flex: 1; min-width: 0; }
 
@@ -395,9 +377,14 @@ import { SITE } from '../config/site.js';
   .kc-pill-btn .kc-pill-label { display: none; }
   .kc-dash-btn .kc-dash-label { display: none; }
   .kc-btn-label { display: none; }
-  .kc-dash-btn { padding-inline: 14px; }
-  .kc-pill-btn { padding-inline: 14px; }
-  .kc-icon-btn { padding-inline: 14px; }
+  .kc-dash-btn { padding-inline: 12px; }
+  .kc-pill-btn { padding-inline: 12px; }
+  .kc-icon-btn { padding-inline: 12px; }
+  #kc-header { gap: 4px; padding-inline: 10px; }
+}
+@media (max-width: 380px) {
+  .kc-logo-wordmark { display: none; }
+  .kc-logo-img { width: 34px; height: 34px; }
 }
 
 /* Wake status — minimal dot indicator, not a control */
@@ -448,7 +435,7 @@ import { SITE } from '../config/site.js';
   min-width: 16px; height: 16px;
   padding-inline: 4px;
   background: var(--kc-danger);
-  color: #fff;
+  color: #111;
   font-size: .65rem;
   font-weight: 700;
   border-radius: 999px;

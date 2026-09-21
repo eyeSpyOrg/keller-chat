@@ -31,7 +31,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
           <polyline points="16 17 21 12 16 7"/>
           <line x1="21" y1="12" x2="9" y2="12"/>
         </svg>
-        Log out
+        <span class="dash-auth-label">Log out</span>
       </a>
     </header>
 
@@ -42,7 +42,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         <div class="dash-section-header">
           <h2 id="connections-heading" class="dash-section-title">
             Connections
-            <span class="dash-badge" aria-label="2 pending">2</span>
+            <span class="dash-badge" role="img" aria-label="2 pending">2</span>
           </h2>
         </div>
 
@@ -85,7 +85,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
           <h2 id="reminders-heading" class="dash-section-title">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
             Reminders
-            <span class="dash-badge dash-badge--warn" aria-label="3 reminders">3</span>
+            <span class="dash-badge dash-badge--warn" role="img" aria-label="3 reminders">3</span>
           </h2>
           <button class="remind-add-btn" aria-label="Add a reminder">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -296,7 +296,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   --kc-burnt:       #933001;
   --kc-text-1:      #EDF1FF;
   --kc-text-2:      #7A95C4;
-  --kc-text-3:      #3F5880;
+  --kc-text-3:      #8FA8CC;
   --kc-success:     #3FD278;
   --kc-warning:     #F5BC4B;
   --kc-danger:      #F56B6B;
@@ -310,7 +310,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     --kc-surface-2: #EEF1F7; --kc-surface-3: #E2E8F2;
     --kc-border:    #C8D4E8; --kc-accent:   #3F5DAA;
     --kc-accent-dim: rgba(63,93,170,.10);
-    --kc-text-1:    #0A1830; --kc-text-2:   #3A5070; --kc-text-3: #7A9ABE;
+    --kc-text-1:    #0A1830; --kc-text-2:   #3A5070; --kc-text-3: #4A6080;
   }
 }
 :root[data-theme="light"] {
@@ -318,7 +318,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   --kc-surface-2: #EEF1F7; --kc-surface-3: #E2E8F2;
   --kc-border:    #C8D4E8; --kc-accent:   #3F5DAA;
   --kc-accent-dim: rgba(63,93,170,.10);
-  --kc-text-1:    #0A1830; --kc-text-2:   #3A5070; --kc-text-3: #7A9ABE;
+  --kc-text-1:    #0A1830; --kc-text-2:   #3A5070; --kc-text-3: #4A6080;
 }
 
 /* ── Shell ──────────────────────────────────────────────────── */
@@ -348,7 +348,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  color: var(--kc-accent);
+  color: var(--kc-text-1);
   text-decoration: none;
   font-family: var(--kc-font-display);
   font-size: .875rem;
@@ -434,7 +434,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   height: 20px;
   padding-inline: 5px;
   background: var(--kc-danger);
-  color: #fff;
+  color: #111;
   font-size: .65rem;
   font-weight: 700;
   border-radius: 999px;
@@ -454,14 +454,14 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 .conn-avatar {
   width: 42px; height: 42px;
   border-radius: 50%;
-  background: var(--kc-accent-dim);
+  background: var(--kc-accent);
   border: 2px solid var(--kc-accent);
   display: grid;
   place-items: center;
   font-family: var(--kc-font-display);
   font-weight: 700;
   font-size: .875rem;
-  color: var(--kc-accent);
+  color: #000000;
   flex-shrink: 0;
 }
 .conn-info { flex: 1; min-width: 0; }
@@ -470,7 +470,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 .conn-meta { font-size: .75rem; color: var(--kc-text-3); margin-top: 2px; }
 .conn-actions { display: flex; gap: 8px; flex-shrink: 0; }
 .conn-btn {
-  height: 36px;
+  min-height: 44px;
   padding-inline: 14px;
   border-radius: 8px;
   border: none;
@@ -555,7 +555,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  height: 30px;
+  min-height: 44px;
   padding-inline: 10px;
   border-radius: 6px;
   border: 1px solid var(--kc-border);
@@ -599,7 +599,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 .remind-item--urgent .remind-meta { color: var(--kc-warning); }
 
 .remind-done {
-  width: 32px; height: 32px;
+  width: 44px; height: 44px;
   border-radius: 50%;
   border: 2px solid var(--kc-border);
   background: transparent;
@@ -616,7 +616,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 /* ── Activity tabs ──────────────────────────────────────────── */
 .act-tabs { display: flex; gap: 4px; }
 .act-tab {
-  height: 32px;
+  min-height: 44px;
   padding-inline: 12px;
   border-radius: 6px;
   border: 1px solid transparent;
@@ -631,8 +631,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 .act-tab:hover { background: var(--kc-surface-2); color: var(--kc-text-1); }
 .act-tab:focus-visible { outline: 3px solid var(--kc-accent); outline-offset: 2px; }
 .act-tab.active {
-  background: var(--kc-accent-dim);
-  color: var(--kc-accent);
+  background: var(--kc-accent);
+  color: #000000;
   border-color: var(--kc-accent);
 }
 
@@ -707,6 +707,14 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   .conn-item { flex-wrap: wrap; }
   .conn-actions { width: 100%; justify-content: flex-end; }
   .dash-section-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .conn-btn { flex: 1; }
+}
+@media (max-width: 480px) {
+  .dash-auth-label { display: none; }
+  #dash-header { padding-inline: 12px; gap: 8px; }
+  .dash-back { padding: 6px 8px; }
+  .dash-auth-btn { padding: 6px 8px; border-radius: 8px; }
+  .dash-title { font-size: 1rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {

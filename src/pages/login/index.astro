@@ -18,9 +18,9 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
       <!-- KellerChat identity -->
       <div class="login-brand">
-        <div class="kc-mark" aria-hidden="true">K</div>
+        <img src="/kc-logo-mark.png" alt="" class="kc-mark-img" aria-hidden="true" width="64" height="64">
         <div>
-          <h1 class="login-title">Navigator Portal</h1>
+          <h1 class="login-title">Keller Chat</h1>
           <p class="login-sub">Keller<span class="login-sub-sep" aria-hidden="true"> · </span><span class="login-sub-chat">Chat</span><span class="login-sub-org"> · Eye Spy Foundation</span></p>
         </div>
       </div>
@@ -75,9 +75,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       </a>
 
       <p class="login-legal">
-        By signing in you agree to our
-        <a href="/privacy/">Privacy Policy</a> and
-        <a href="/terms/">Terms of Use</a>.<br />
         Authorized Eye Spy Foundation navigators only.
       </p>
 
@@ -123,20 +120,11 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   align-items: center;
   gap: 0.875rem;
 }
-.kc-mark {
-  width: 52px;
-  height: 52px;
-  /* Original Orange (#F37121) + near-black: 5.1:1 ✓ */
-  background: #F37121;
-  border-radius: 12px;
-  display: grid;
-  place-items: center;
-  font-family: 'Poppins', system-ui, sans-serif;
-  font-weight: 700;
-  font-size: 1.5rem;
-  color: #111111;
+.kc-mark-img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
   flex-shrink: 0;
-  letter-spacing: -0.02em;
 }
 .login-title {
   font-family: 'Poppins', system-ui, sans-serif;
@@ -153,10 +141,10 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   font-weight: 600;
   letter-spacing: 0.02em;
 }
-/* "Chat" in Original Orange — forward accent */
-.login-sub-chat { color: #F37121; }
-.login-sub-sep  { color: #aaaaaa; font-weight: 300; }
-.login-sub-org  { color: #888888; }
+/* "Chat" in Burnt Orange — passes 4.5:1 on white */
+.login-sub-chat { color: #933001; }
+.login-sub-sep  { color: #767676; font-weight: 300; }
+.login-sub-org  { color: #767676; }
 
 /* ── Description ────────────────────────────────────────────── */
 .login-description {
@@ -216,7 +204,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  color: #aaaaaa;
+  color: #767676;
   font-size: 0.8rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -271,7 +259,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 .login-legal {
   margin: 0;
   font-size: 0.78rem;
-  color: #888888;
+  color: #767676;
   line-height: 1.6;
   text-align: center;
 }
