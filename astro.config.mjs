@@ -2,9 +2,16 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
+import cloudflare from '@astrojs/cloudflare';
 import { SITE } from './src/config/site.js';
 
 export default defineConfig({
+  // Hybrid: most pages stay static; API routes + dashboard are server-rendered.
+  output: 'hybrid',
+  adapter: cloudflare({
+    platformProxy: { enabled: true }, // lets `astro dev` read wrangler env vars
+  }),
+
   // Sitemap + canonical URLs require this. Change per project in src/config/site.js
   site: SITE.url,
   integrations: [

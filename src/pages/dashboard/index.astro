@@ -723,6 +723,14 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 </style>
 
 <script>
+// ─────────────────────────────────────────────────────────────────────────────
+// KellerChat Navigator Dashboard — live HubSpot data
+// All data is fetched from /api/* routes that proxy to HubSpot server-side.
+// The HubSpot Private App token never reaches the browser.
+// ─────────────────────────────────────────────────────────────────────────────
+
+// ── Utilities ────────────────────────────────────────────────────────────────
+
 const srStatus = document.getElementById('sr-status');
 function announce(msg: string) {
   if (!srStatus) return;
@@ -730,107 +738,315 @@ function announce(msg: string) {
   requestAnimationFrame(() => { srStatus.textContent = msg; });
 }
 
-/* ── Reminders ──────────────────────────────────────────────── */
-let remindCount = document.querySelectorAll('.remind-item').length;
-const remindBadge = document.querySelector('.dash-badge--warn');
+function initials(name: string): string {
+  return name.split(' ').filter(Boolean).map(w => w[0]).join('').slice(0, 2).toUpperCase() || '?';
+}
 
-document.querySelectorAll<HTMLButtonElement>('.remind-done').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const item = btn.closest('.remind-item')!;
-    item.classList.add('done');
-    btn.disabled = true;
-    remindCount = Math.max(0, remindCount - 1);
-    if (remindBadge) { remindBadge.textContent = String(remindCount); remindBadge.hidden = remindCount === 0; }
-    announce('Reminder marked as done.');
-  });
-});
+function relativeTime(iso: string): string {
+  if (!iso) return '';
+  const diff = Date.now() - new Date(iso).getTime();
+  const min = Math.floor(diff / 60000);
+  if (min < 1) return 'just now';
+  if (min < 60) return `${min} min ago`;
+  const hr = Math.floor(min / 60);
+  if (hr < 24) return `${hr} hr ago`;
+  return new Date(iso).toLocaleDateString();
+}
 
-/* ── Connection accept / decline ────────────────────────────── */
-let pendingCount = 2;
-const dashBadge = document.querySelector('.dash-badge');
+function formatDue(iso: string): string {
+  if (!iso) return '';
+  const d = new Date(iso);
+  const today = new Date(); today.setHours(0,0,0,0);
+  const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
+  d.setHours(0,0,0,0);
+  const time = new Date(iso).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  if (d.getTime() === today.getTime()) return `Today · ${time}`;
+  if (d.getTime() === tomorrow.getTime()) return `Tomorrow · ${time}`;
+  return `${d.toLocaleDateString()} · ${time}`;
+}
 
-document.querySelectorAll<HTMLButtonElement>('.conn-btn.accept').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const li   = btn.closest('li')!;
-    const name = btn.dataset.name || 'Navigator';
-    li.remove();
-    pendingCount = Math.max(0, pendingCount - 1);
-    if (dashBadge) { dashBadge.textContent = String(pendingCount); dashBadge.hidden = pendingCount === 0; }
-    announce(`Connected with ${name}. Chat session started.`);
-  });
-});
+function durStr(sec: number): string {
+  if (!sec) return '';
+  const m = Math.floor(sec / 60), s = sec % 60;
+  return `${m} min ${s} sec`;
+}
 
-document.querySelectorAll<HTMLButtonElement>('.conn-btn.decline').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const li   = btn.closest('li')!;
-    const name = li.querySelector('.conn-name')?.textContent || 'Navigator';
-    li.remove();
-    pendingCount = Math.max(0, pendingCount - 1);
-    if (dashBadge) { dashBadge.textContent = String(pendingCount); dashBadge.hidden = pendingCount === 0; }
-    announce(`Connection from ${name} declined.`);
-  });
-});
+// ── Transfer modal references ────────────────────────────────────────────────
 
-/* ── Transfer modal ─────────────────────────────────────────── */
-const transferModal   = document.getElementById('transfer-modal')!;
-const transferClose   = document.getElementById('transfer-close')!;
-const transferCancel  = document.getElementById('transfer-cancel')!;
-const transferConfirm = document.getElementById('transfer-confirm') as HTMLButtonElement;
-const transferSelect  = document.getElementById('transfer-select') as HTMLSelectElement;
+const transferModal    = document.getElementById('transfer-modal')!;
+const transferClose    = document.getElementById('transfer-close')!;
+const transferCancel   = document.getElementById('transfer-cancel')!;
+const transferConfirm  = document.getElementById('transfer-confirm') as HTMLButtonElement;
+const transferSelect   = document.getElementById('transfer-select') as HTMLSelectElement;
 const transferLeadDisplay = document.getElementById('transfer-lead-display')!;
+let   transferContactId = '';
 
-function openTransfer(leadName: string) {
-  transferLeadDisplay.textContent = leadName;
+function openTransfer(contactId: string, name: string) {
+  transferContactId = contactId;
+  transferLeadDisplay.textContent = name;
   transferSelect.value = '';
   (document.getElementById('transfer-note') as HTMLTextAreaElement).value = '';
   transferConfirm.disabled = true;
   transferModal.hidden = false;
   transferSelect.focus();
-  announce(`Transfer dialog opened for ${leadName}. Select a navigator.`);
+  announce(`Transfer dialog opened for ${name}. Select a navigator.`);
 }
-function closeTransfer() { transferModal.hidden = true; }
+function closeTransfer() { transferModal.hidden = true; transferContactId = ''; }
 
-document.querySelectorAll<HTMLButtonElement>('.conn-btn.transfer').forEach(btn => {
-  btn.addEventListener('click', () => openTransfer(btn.dataset.name || 'lead'));
-});
 transferClose.addEventListener('click', closeTransfer);
 transferCancel.addEventListener('click', closeTransfer);
 transferModal.addEventListener('click', e => { if (e.target === transferModal) closeTransfer(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && !transferModal.hidden) closeTransfer(); });
+transferSelect.addEventListener('change', () => { transferConfirm.disabled = !transferSelect.value; });
 
-transferSelect.addEventListener('change', () => {
-  transferConfirm.disabled = !transferSelect.value;
-});
-transferConfirm.addEventListener('click', () => {
+transferConfirm.addEventListener('click', async () => {
   const dest = transferSelect.options[transferSelect.selectedIndex].text;
-  const lead = transferLeadDisplay.textContent;
-  // TODO: POST /api/hubspot/transfer — log CRM swim-lane move
-  console.log('[Transfer]', lead, '→', dest);
-  announce(`${lead} transferred to ${dest}.`);
-  // Remove the connection row from the list
-  document.querySelectorAll<HTMLButtonElement>('.conn-btn.transfer').forEach(btn => {
-    if (btn.dataset.name === lead) btn.closest('li')?.remove();
-  });
-  pendingCount = Math.max(0, pendingCount - 1);
-  if (dashBadge) { dashBadge.textContent = String(pendingCount); dashBadge.hidden = pendingCount === 0; }
-  closeTransfer();
+  const navigatorOwnerId = transferSelect.value;
+  const name = transferLeadDisplay.textContent || '';
+  transferConfirm.disabled = true;
+  try {
+    const res = await fetch(`/api/connections/${transferContactId}/transfer`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ navigatorOwnerId }),
+    });
+    if (!res.ok) throw new Error(`${res.status}`);
+    announce(`${name} transferred to ${dest}.`);
+    closeTransfer();
+    // Re-render connections so the row updates to Transferred status
+    await loadConnections();
+  } catch {
+    announce('Transfer failed. Please try again.');
+    transferConfirm.disabled = false;
+  }
 });
 
-/* ── Activity filter tabs ───────────────────────────────────── */
-const tabs  = document.querySelectorAll<HTMLButtonElement>('.act-tab');
-const items = document.querySelectorAll<HTMLLIElement>('.act-item');
+// ── Connections ──────────────────────────────────────────────────────────────
 
-tabs.forEach(tab => {
+const connList  = document.querySelector('.conn-list')!;
+const dashBadge = document.querySelector<HTMLElement>('.dash-badge');
+
+function renderConnections(connections: any[]) {
+  const pendingCount = connections.filter(c => c.status === 'New').length;
+  if (dashBadge) {
+    dashBadge.textContent = String(pendingCount);
+    dashBadge.hidden = pendingCount === 0;
+    dashBadge.setAttribute('aria-label', `${pendingCount} pending`);
+  }
+
+  if (!connections.length) {
+    connList.innerHTML = '<li class="conn-item" style="justify-content:center;color:var(--kc-text-2);font-size:.875rem;padding:24px">No connections yet.</li>';
+    return;
+  }
+
+  connList.innerHTML = connections.map(c => {
+    const isNew = c.status === 'New';
+    const statusLabel = c.status === 'New' ? 'Pending' : c.status;
+    const statusColor = c.status === 'Active'
+      ? 'var(--kc-success)' : c.status === 'New'
+      ? 'var(--kc-warning)' : 'var(--kc-text-3)';
+    return `
+      <li class="conn-item" data-id="${c.id}">
+        <div class="conn-avatar" aria-hidden="true">${initials(c.name)}</div>
+        <div class="conn-info">
+          <div class="conn-name">${c.name}</div>
+          <div class="conn-role">${c.type}${c.source ? ` — ${c.source}` : ''}</div>
+          <div class="conn-meta">${relativeTime(c.referredAt)} &nbsp;·&nbsp;
+            <span style="color:${statusColor};font-weight:600">${statusLabel}</span>
+          </div>
+        </div>
+        <div class="conn-actions">
+          ${isNew ? `
+            <button class="conn-btn accept" data-id="${c.id}" data-name="${c.name}" aria-label="Accept connection from ${c.name}">Accept</button>
+            <button class="conn-btn decline" data-id="${c.id}" data-name="${c.name}" aria-label="Decline connection from ${c.name}">Decline</button>
+            <button class="conn-btn transfer" data-id="${c.id}" data-name="${c.name}" aria-label="Transfer lead from ${c.name}" aria-haspopup="dialog">Transfer</button>
+          ` : `<span style="font-size:.8rem;color:var(--kc-text-3)">${c.status}</span>`}
+        </div>
+      </li>`;
+  }).join('');
+
+  // Wire buttons
+  connList.querySelectorAll<HTMLButtonElement>('.conn-btn.accept').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const id = btn.dataset.id!;
+      const name = btn.dataset.name || 'Navigator';
+      btn.disabled = true;
+      try {
+        const res = await fetch(`/api/connections/${id}/accept`, { method: 'PATCH' });
+        if (!res.ok) throw new Error(`${res.status}`);
+        announce(`Connected with ${name}.`);
+        await loadConnections();
+      } catch {
+        announce('Accept failed. Please try again.');
+        btn.disabled = false;
+      }
+    });
+  });
+
+  connList.querySelectorAll<HTMLButtonElement>('.conn-btn.decline').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const id = btn.dataset.id!;
+      const name = btn.dataset.name || 'Navigator';
+      btn.disabled = true;
+      try {
+        const res = await fetch(`/api/connections/${id}/decline`, { method: 'PATCH' });
+        if (!res.ok) throw new Error(`${res.status}`);
+        announce(`Connection from ${name} declined.`);
+        await loadConnections();
+      } catch {
+        announce('Decline failed. Please try again.');
+        btn.disabled = false;
+      }
+    });
+  });
+
+  connList.querySelectorAll<HTMLButtonElement>('.conn-btn.transfer').forEach(btn => {
+    btn.addEventListener('click', () => openTransfer(btn.dataset.id!, btn.dataset.name || 'lead'));
+  });
+}
+
+async function loadConnections() {
+  try {
+    const res = await fetch('/api/connections');
+    if (!res.ok) throw new Error(`${res.status}`);
+    renderConnections(await res.json());
+  } catch {
+    connList.innerHTML = '<li class="conn-item" style="color:var(--kc-danger);padding:16px 20px;font-size:.875rem">Could not load connections.</li>';
+  }
+}
+
+// ── Reminders ────────────────────────────────────────────────────────────────
+
+const remindList  = document.querySelector('.remind-list')!;
+const remindBadge = document.querySelector<HTMLElement>('.dash-badge--warn');
+let   remindCount = 0;
+
+function renderReminders(reminders: any[]) {
+  remindCount = reminders.length;
+  if (remindBadge) {
+    remindBadge.textContent = String(remindCount);
+    remindBadge.hidden = remindCount === 0;
+    remindBadge.setAttribute('aria-label', `${remindCount} reminders`);
+  }
+
+  if (!reminders.length) {
+    remindList.innerHTML = '<li class="remind-item" style="color:var(--kc-text-2);font-size:.875rem">No open reminders.</li>';
+    return;
+  }
+
+  const now = Date.now();
+  remindList.innerHTML = reminders.map(r => {
+    const urgent = r.dueAt && new Date(r.dueAt).getTime() < now + 3600000;
+    const label = r.contactName ? `${r.subject} — <strong>${r.contactName}</strong>` : r.subject;
+    return `
+      <li class="remind-item ${urgent ? 'remind-item--urgent' : ''}" data-id="${r.id}">
+        <div class="remind-indicator" aria-hidden="true"></div>
+        <div class="remind-body">
+          <div class="remind-text">${label}</div>
+          <div class="remind-meta">${formatDue(r.dueAt)}</div>
+        </div>
+        <button class="remind-done" aria-label="Mark reminder as done: ${r.subject}">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        </button>
+      </li>`;
+  }).join('');
+
+  remindList.querySelectorAll<HTMLButtonElement>('.remind-done').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const li = btn.closest('.remind-item') as HTMLElement;
+      const id = li.dataset.id!;
+      btn.disabled = true;
+      li.classList.add('done');
+      try {
+        const res = await fetch('/api/reminders', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id }),
+        });
+        if (!res.ok) throw new Error(`${res.status}`);
+        remindCount = Math.max(0, remindCount - 1);
+        if (remindBadge) { remindBadge.textContent = String(remindCount); remindBadge.hidden = remindCount === 0; }
+        announce('Reminder marked as done.');
+      } catch {
+        li.classList.remove('done');
+        btn.disabled = false;
+        announce('Could not complete reminder. Please try again.');
+      }
+    });
+  });
+}
+
+async function loadReminders() {
+  try {
+    const res = await fetch('/api/reminders');
+    if (!res.ok) throw new Error(`${res.status}`);
+    renderReminders(await res.json());
+  } catch {
+    remindList.innerHTML = '<li class="remind-item" style="color:var(--kc-danger);padding:16px 20px;font-size:.875rem">Could not load reminders.</li>';
+  }
+}
+
+// ── Activity ─────────────────────────────────────────────────────────────────
+
+const actList = document.querySelector('.act-list')!;
+const actTabs = document.querySelectorAll<HTMLButtonElement>('.act-tab');
+let   actFilter = 'all';
+
+function callIcon() {
+  return `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72c.12.96.36 1.9.72 2.81a2 2 0 0 1-.45 2.11L7.91 8.82a16 16 0 0 0 6.29 6.29l.98-.98a2 2 0 0 1 2.1-.45c.9.36 1.85.6 2.81.72A2 2 0 0 1 22 16.92z"/></svg>`;
+}
+function emailIcon() {
+  return `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>`;
+}
+
+function renderActivity(items: any[]) {
+  if (!items.length) {
+    actList.innerHTML = '<li class="act-item" style="color:var(--kc-text-2);font-size:.875rem">No activity yet.</li>';
+    return;
+  }
+  actList.innerHTML = items.map(item => {
+    const isCall = item.type === 'call';
+    const dirLabel = (item.direction ?? '').includes('INBOUND') ? 'Inbound' : 'Outbound';
+    const headline = isCall
+      ? `${dirLabel} call`
+      : `Email ${(item.direction ?? '').includes('INCOMING') ? 'received' : 'sent'}`;
+    const detail = isCall
+      ? [item.durationSec ? `Duration: ${durStr(item.durationSec)}` : '', item.summary].filter(Boolean).join(' · ')
+      : item.summary;
+    return `
+      <li class="act-item" data-type="${item.type}">
+        <div class="act-icon act-icon--${item.type}" aria-hidden="true">${isCall ? callIcon() : emailIcon()}</div>
+        <div class="act-body">
+          <div class="act-headline">${headline}</div>
+          <div class="act-detail">${detail || ''}</div>
+        </div>
+        <time class="act-time" datetime="${item.createdAt}">${relativeTime(item.createdAt)}</time>
+      </li>`;
+  }).join('');
+}
+
+async function loadActivity(filter = actFilter) {
+  try {
+    const res = await fetch(`/api/activity?filter=${filter}`);
+    if (!res.ok) throw new Error(`${res.status}`);
+    renderActivity(await res.json());
+  } catch {
+    actList.innerHTML = '<li class="act-item" style="color:var(--kc-danger);padding:16px 20px;font-size:.875rem">Could not load activity.</li>';
+  }
+}
+
+actTabs.forEach(tab => {
   tab.addEventListener('click', () => {
     const filter = tab.dataset.filter!;
-    tabs.forEach(t => { t.classList.remove('active'); t.setAttribute('aria-pressed', 'false'); });
+    actFilter = filter;
+    actTabs.forEach(t => { t.classList.remove('active'); t.setAttribute('aria-pressed', 'false'); });
     tab.classList.add('active');
     tab.setAttribute('aria-pressed', 'true');
-    items.forEach(item => {
-      item.hidden = filter !== 'all' && item.dataset.type !== filter;
-    });
-    const label = filter === 'all' ? 'All activity' : `${tab.textContent} only`;
-    announce(`Showing: ${label}`);
+    announce(`Showing: ${filter === 'all' ? 'All activity' : tab.textContent + ' only'}`);
+    loadActivity(filter);
   });
 });
+
+// ── Boot — load all three sections in parallel ───────────────────────────────
+Promise.all([loadConnections(), loadReminders(), loadActivity()]);
 </script>

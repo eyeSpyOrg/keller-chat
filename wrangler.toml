@@ -1,0 +1,22 @@
+name = "keller-chat"
+compatibility_date = "2024-12-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Pages Functions / Workers Sites build output
+pages_build_output_dir = "dist"
+
+# ── Environment variables ─────────────────────────────────────────────────────
+# Secret values (HUBSPOT_PRIVATE_APP_TOKEN, etc.) must be set via:
+#   wrangler secret put HUBSPOT_PRIVATE_APP_TOKEN
+# or in the Cloudflare dashboard → Workers & Pages → keller-chat → Settings → Variables.
+# Never commit real values here.
+
+[vars]
+# Non-secret identifiers (safe to commit)
+# HUBSPOT_ERIC_OWNER_ID: Eric's HubSpot owner ID — find it at
+#   HubSpot → Settings → Users & Teams → [Eric Davis] → copy the numeric ID from the URL.
+HUBSPOT_ERIC_OWNER_ID = "PUT_ERIC_OWNER_ID_HERE"
+
+# ── Local dev ────────────────────────────────────────────────────────────────
+# Copy .env.example → .env and fill in real values.
+# `astro dev` with platformProxy reads these automatically via wrangler.
