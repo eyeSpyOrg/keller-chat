@@ -6,8 +6,8 @@ import cloudflare from '@astrojs/cloudflare';
 import { SITE } from './src/config/site.js';
 
 export default defineConfig({
-  // Hybrid: most pages stay static; API routes + dashboard are server-rendered.
-  output: 'hybrid',
+  // Static output with server islands: API routes use `export const prerender = false`
+  output: 'static',
   adapter: cloudflare({
     platformProxy: { enabled: true }, // lets `astro dev` read wrangler env vars
   }),

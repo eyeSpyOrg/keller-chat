@@ -15,7 +15,7 @@ pages_build_output_dir = "dist"
 # Non-secret identifiers (safe to commit)
 # HUBSPOT_ERIC_OWNER_ID: Eric's HubSpot owner ID — find it at
 #   HubSpot → Settings → Users & Teams → [Eric Davis] → copy the numeric ID from the URL.
-HUBSPOT_ERIC_OWNER_ID = "PUT_ERIC_OWNER_ID_HERE"
+HUBSPOT_ERIC_OWNER_ID = "101583474"
 
 # ── Local dev ────────────────────────────────────────────────────────────────
 # Copy .env.example → .env and fill in real values.
