@@ -394,18 +394,17 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 20px 14px;
+  padding: 18px 20px;
   border-bottom: 1px solid var(--kc-border);
   gap: 12px;
   flex-wrap: wrap;
 }
 .dash-section-title {
   font-family: var(--kc-font-display);
-  font-size: .9rem;
+  font-size: 1rem;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: .06em;
-  color: var(--kc-text-3);
+  letter-spacing: .01em;
+  color: var(--kc-text-1);
   margin: 0;
   display: flex;
   align-items: center;
@@ -416,10 +415,10 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   place-items: center;
   min-width: 20px;
   height: 20px;
-  padding-inline: 5px;
+  padding-inline: 6px;
   background: var(--kc-danger);
-  color: #111;
-  font-size: .65rem;
+  color: #fff;
+  font-size: .7rem;
   font-weight: 700;
   border-radius: 999px;
   font-variant-numeric: tabular-nums;
@@ -430,8 +429,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 .conn-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 14px 20px;
+  gap: 14px;
+  padding: 16px 20px;
   border-bottom: 1px solid var(--kc-border);
 }
 .conn-item:last-child { border-bottom: none; }
@@ -449,9 +448,9 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   flex-shrink: 0;
 }
 .conn-info { flex: 1; min-width: 0; }
-.conn-name { font-size: .9375rem; font-weight: 700; color: var(--kc-text-1); }
-.conn-role { font-size: .8rem; color: var(--kc-text-2); margin-top: 1px; }
-.conn-meta { font-size: .75rem; color: var(--kc-text-3); margin-top: 2px; }
+.conn-name { font-size: .9375rem; font-weight: 700; color: var(--kc-text-1); line-height: 1.3; }
+.conn-role { font-size: .8125rem; color: var(--kc-text-2); margin-top: 2px; }
+.conn-meta { font-size: .75rem; color: var(--kc-text-3); margin-top: 3px; }
 .conn-actions { display: flex; gap: 8px; flex-shrink: 0; }
 .conn-btn {
   min-height: 44px;
@@ -558,8 +557,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 .remind-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 14px 20px;
+  gap: 14px;
+  padding: 16px 20px;
   border-bottom: 1px solid var(--kc-border);
   transition: background .1s;
 }
@@ -578,8 +577,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 .remind-item.done    .remind-indicator { background: var(--kc-text-3); }
 
 .remind-body { flex: 1; min-width: 0; }
-.remind-text { font-size: .875rem; color: var(--kc-text-1); line-height: 1.4; }
-.remind-meta { font-size: .75rem; color: var(--kc-text-3); margin-top: 2px; }
+.remind-text { font-size: .875rem; color: var(--kc-text-1); line-height: 1.5; }
+.remind-meta { font-size: .8rem; color: var(--kc-text-3); margin-top: 3px; }
 .remind-item--urgent .remind-meta { color: var(--kc-warning); }
 
 .remind-done {
@@ -626,7 +625,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   display: flex;
   align-items: flex-start;
   gap: 14px;
-  padding: 14px 20px;
+  padding: 16px 20px;
   border-bottom: 1px solid var(--kc-border);
   transition: background .1s;
 }
@@ -647,6 +646,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 .act-body { flex: 1; min-width: 0; }
 .act-headline {
   font-size: .875rem;
+  font-weight: 600;
   color: var(--kc-text-1);
   line-height: 1.4;
 }
@@ -654,10 +654,10 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: .8rem;
+  font-size: .8125rem;
   color: var(--kc-text-2);
-  margin-top: 2px;
-  line-height: 1.4;
+  margin-top: 3px;
+  line-height: 1.5;
   flex-wrap: wrap;
 }
 .crm-stage {
