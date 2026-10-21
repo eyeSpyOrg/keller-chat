@@ -282,8 +282,9 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 :global(body > .site-footer) { display: none !important; }
 :global(#main-content) { padding: 0 !important; }
 
-/* ── KellerChat token system (same as chat page) ────────────── */
-:root {
+/* ── KellerChat token system — dashboard always dark ────────── */
+#dash-shell,
+#dash-shell * {
   --kc-bg:          #09101F;
   --kc-surface:     #101825;
   --kc-surface-2:   #192236;
@@ -302,22 +303,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   --kc-font-display: 'Poppins', system-ui, sans-serif;
   --kc-radius:      10px;
   --kc-radius-lg:   16px;
-}
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme="dark"]) {
-    --kc-bg:        #F0F4F8; --kc-surface:  #FFFFFF;
-    --kc-surface-2: #EEF1F7; --kc-surface-3: #E2E8F2;
-    --kc-border:    #C8D4E8; --kc-accent:   #3F5DAA;
-    --kc-accent-dim: rgba(63,93,170,.10);
-    --kc-text-1:    #0A1830; --kc-text-2:   #3A5070; --kc-text-3: #4A6080;
-  }
-}
-:root[data-theme="light"] {
-  --kc-bg:        #F0F4F8; --kc-surface:  #FFFFFF;
-  --kc-surface-2: #EEF1F7; --kc-surface-3: #E2E8F2;
-  --kc-border:    #C8D4E8; --kc-accent:   #3F5DAA;
-  --kc-accent-dim: rgba(63,93,170,.10);
-  --kc-text-1:    #0A1830; --kc-text-2:   #3A5070; --kc-text-3: #4A6080;
 }
 
 /* ── Shell ──────────────────────────────────────────────────── */
