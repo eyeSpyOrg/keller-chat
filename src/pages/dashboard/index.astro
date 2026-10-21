@@ -139,9 +139,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
           <!-- Filter tabs -->
           <div class="act-tabs" role="group" aria-label="Filter activity">
             <button class="act-tab active" data-filter="all" aria-pressed="true">All</button>
-            <button class="act-tab" data-filter="call" aria-pressed="false">Calls</button>
-            <button class="act-tab" data-filter="email" aria-pressed="false">Emails</button>
-            <button class="act-tab" data-filter="crm" aria-pressed="false">CRM</button>
+            <button class="act-tab" data-filter="calls" aria-pressed="false">Calls</button>
+            <button class="act-tab" data-filter="emails" aria-pressed="false">Emails</button>
           </div>
         </div>
 
@@ -731,6 +730,10 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
 // ── Utilities ────────────────────────────────────────────────────────────────
 
+function esc(str: string): string {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
 const srStatus = document.getElementById('sr-status');
 function announce(msg: string) {
   if (!srStatus) return;
@@ -841,26 +844,30 @@ function renderConnections(connections: any[]) {
 
   connList.innerHTML = connections.map(c => {
     const isNew = c.status === 'New';
-    const statusLabel = c.status === 'New' ? 'Pending' : c.status;
+    const statusLabel = c.status === 'New' ? 'Pending' : esc(c.status);
     const statusColor = c.status === 'Active'
       ? 'var(--kc-success)' : c.status === 'New'
       ? 'var(--kc-warning)' : 'var(--kc-text-3)';
+    const name = esc(c.name);
+    const type = esc(c.type);
+    const source = esc(c.source);
+    const id = esc(c.id);
     return `
-      <li class="conn-item" data-id="${c.id}">
-        <div class="conn-avatar" aria-hidden="true">${initials(c.name)}</div>
+      <li class="conn-item" data-id="${id}">
+        <div class="conn-avatar" aria-hidden="true">${esc(initials(c.name))}</div>
         <div class="conn-info">
-          <div class="conn-name">${c.name}</div>
-          <div class="conn-role">${c.type}${c.source ? ` — ${c.source}` : ''}</div>
-          <div class="conn-meta">${relativeTime(c.referredAt)} &nbsp;·&nbsp;
+          <div class="conn-name">${name}</div>
+          <div class="conn-role">${type}${source ? ` — ${source}` : ''}</div>
+          <div class="conn-meta">${esc(relativeTime(c.referredAt))} &nbsp;·&nbsp;
             <span style="color:${statusColor};font-weight:600">${statusLabel}</span>
           </div>
         </div>
         <div class="conn-actions">
           ${isNew ? `
-            <button class="conn-btn accept" data-id="${c.id}" data-name="${c.name}" aria-label="Accept connection from ${c.name}">Accept</button>
-            <button class="conn-btn decline" data-id="${c.id}" data-name="${c.name}" aria-label="Decline connection from ${c.name}">Decline</button>
-            <button class="conn-btn transfer" data-id="${c.id}" data-name="${c.name}" aria-label="Transfer lead from ${c.name}" aria-haspopup="dialog">Transfer</button>
-          ` : `<span style="font-size:.8rem;color:var(--kc-text-3)">${c.status}</span>`}
+            <button class="conn-btn accept" data-id="${id}" data-name="${name}" aria-label="Accept connection from ${name}">Accept</button>
+            <button class="conn-btn decline" data-id="${id}" data-name="${name}" aria-label="Decline connection from ${name}">Decline</button>
+            <button class="conn-btn transfer" data-id="${id}" data-name="${name}" aria-label="Transfer lead from ${name}" aria-haspopup="dialog">Transfer</button>
+          ` : `<span style="font-size:.8rem;color:var(--kc-text-3)">${statusLabel}</span>`}
         </div>
       </li>`;
   }).join('');
@@ -937,15 +944,18 @@ function renderReminders(reminders: any[]) {
   const now = Date.now();
   remindList.innerHTML = reminders.map(r => {
     const urgent = r.dueAt && new Date(r.dueAt).getTime() < now + 3600000;
-    const label = r.contactName ? `${r.subject} — <strong>${r.contactName}</strong>` : r.subject;
+    const subject = esc(r.subject);
+    const label = r.contactName
+      ? `${subject} — <strong>${esc(r.contactName)}</strong>`
+      : subject;
     return `
-      <li class="remind-item ${urgent ? 'remind-item--urgent' : ''}" data-id="${r.id}">
+      <li class="remind-item ${urgent ? 'remind-item--urgent' : ''}" data-id="${esc(r.id)}">
         <div class="remind-indicator" aria-hidden="true"></div>
         <div class="remind-body">
           <div class="remind-text">${label}</div>
-          <div class="remind-meta">${formatDue(r.dueAt)}</div>
+          <div class="remind-meta">${esc(formatDue(r.dueAt))}</div>
         </div>
-        <button class="remind-done" aria-label="Mark reminder as done: ${r.subject}">
+        <button class="remind-done" aria-label="Mark reminder as done: ${subject}">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
         </button>
       </li>`;
@@ -1011,16 +1021,16 @@ function renderActivity(items: any[]) {
       ? `${dirLabel} call`
       : `Email ${(item.direction ?? '').includes('INCOMING') ? 'received' : 'sent'}`;
     const detail = isCall
-      ? [item.durationSec ? `Duration: ${durStr(item.durationSec)}` : '', item.summary].filter(Boolean).join(' · ')
-      : item.summary;
+      ? [item.durationSec ? `Duration: ${durStr(item.durationSec)}` : '', esc(item.summary)].filter(Boolean).join(' · ')
+      : esc(item.summary);
     return `
-      <li class="act-item" data-type="${item.type}">
-        <div class="act-icon act-icon--${item.type}" aria-hidden="true">${isCall ? callIcon() : emailIcon()}</div>
+      <li class="act-item" data-type="${esc(item.type)}">
+        <div class="act-icon act-icon--${esc(item.type)}" aria-hidden="true">${isCall ? callIcon() : emailIcon()}</div>
         <div class="act-body">
-          <div class="act-headline">${headline}</div>
+          <div class="act-headline">${esc(headline)}</div>
           <div class="act-detail">${detail || ''}</div>
         </div>
-        <time class="act-time" datetime="${item.createdAt}">${relativeTime(item.createdAt)}</time>
+        <time class="act-time" datetime="${esc(item.createdAt)}">${esc(relativeTime(item.createdAt))}</time>
       </li>`;
   }).join('');
 }
