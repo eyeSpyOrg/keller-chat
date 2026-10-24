@@ -5,10 +5,14 @@
  */
 import type { APIRoute } from 'astro';
 import { patchContactStatus } from '../../../../lib/hubspot';
+import { requireAuth } from '../../../../lib/auth';
 
 export const prerender = false;
 
 export const PATCH: APIRoute = async ({ params, locals, request }) => {
+  const unauth = requireAuth(locals);
+  if (unauth) return unauth;
+
   const env = (locals as any).runtime?.env ?? {};
   const token: string = env.HUBSPOT_PRIVATE_APP_TOKEN ?? '';
   const contactId = params.id;

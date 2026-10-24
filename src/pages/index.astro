@@ -965,8 +965,7 @@ function initWake() {
       const idx  = full.toLowerCase().indexOf('hey keller');
       if (idx !== -1) {
         capturedAfterWake = full.slice(idx + 10).trim();
-        wakeTranscript.textContent = capturedAfterWake || '';
-        if (!capturedAfterWake) wakeTranscript.innerHTML = '<em>Listening for your message…</em>';
+        setWakeTranscript(capturedAfterWake);
       }
     }
   };
@@ -980,9 +979,20 @@ function initWake() {
   wakePill.classList.add('listening');
 }
 
+function setWakeTranscript(text) {
+  if (text) {
+    wakeTranscript.textContent = text;
+  } else {
+    wakeTranscript.textContent = '';
+    const em = document.createElement('em');
+    em.textContent = 'Listening for your message…';
+    wakeTranscript.appendChild(em);
+  }
+}
+
 function onWakeWord(textAfter) {
   capturedAfterWake = textAfter;
-  wakeTranscript.innerHTML = textAfter ? textAfter : '<em>Listening for your message…</em>';
+  setWakeTranscript(textAfter);
   wakeModal.hidden = false;
   wakeSend.focus();
   announce('Wake word detected. Say your message or press Send.', true);
@@ -998,7 +1008,7 @@ function dismissWakeModal() {
   clearTimeout(wakeTimeout);
   wakeModal.hidden = true;
   capturedAfterWake = '';
-  wakeTranscript.innerHTML = '<em>Listening for your message…</em>';
+  setWakeTranscript('');
 }
 
 wakeSend.addEventListener('click',   () => { if (capturedAfterWake) sendMessage(capturedAfterWake); dismissWakeModal(); chatInput.focus(); });

@@ -4,10 +4,14 @@
  */
 import type { APIRoute } from 'astro';
 import { fetchConnections } from '../../lib/hubspot';
+import { requireAuth } from '../../lib/auth';
 
 export const prerender = false;
 
 export const GET: APIRoute = async ({ locals }) => {
+  const unauth = requireAuth(locals);
+  if (unauth) return unauth;
+
   const env = (locals as any).runtime?.env ?? {};
   const token: string = env.HUBSPOT_PRIVATE_APP_TOKEN ?? '';
   const ownerId: string = env.HUBSPOT_ERIC_OWNER_ID ?? '';

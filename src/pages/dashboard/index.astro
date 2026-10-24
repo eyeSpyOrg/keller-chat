@@ -814,6 +814,10 @@ transferConfirm.addEventListener('click', async () => {
 const connList  = document.querySelector('.conn-list')!;
 const dashBadge = document.querySelector<HTMLElement>('.dash-badge');
 
+// Maps contact id → display name for use in button event handlers.
+// Avoids injecting names into HTML attribute values.
+const connNameMap = new Map<string, string>();
+
 function renderConnections(connections: any[]) {
   const pendingCount = connections.filter(c => c.status === 'New').length;
   if (dashBadge) {
@@ -827,6 +831,10 @@ function renderConnections(connections: any[]) {
     return;
   }
 
+  // Rebuild the name map before re-rendering so stale entries are cleared.
+  connNameMap.clear();
+  connections.forEach(c => connNameMap.set(c.id, c.name));
+
   connList.innerHTML = connections.map(c => {
     const isNew = c.status === 'New';
     const statusLabel = c.status === 'New' ? 'Pending' : esc(c.status);
@@ -837,6 +845,8 @@ function renderConnections(connections: any[]) {
     const type = esc(c.type);
     const source = esc(c.source);
     const id = esc(c.id);
+    // data-name is intentionally omitted — names are looked up from connNameMap
+    // in event handlers so that quotes/special chars in names cannot break HTML.
     return `
       <li class="conn-item" data-id="${id}">
         <div class="conn-avatar" aria-hidden="true">${esc(initials(c.name))}</div>
@@ -849,19 +859,19 @@ function renderConnections(connections: any[]) {
         </div>
         <div class="conn-actions">
           ${isNew ? `
-            <button class="conn-btn accept" data-id="${id}" data-name="${name}" aria-label="Accept connection from ${name}">Accept</button>
-            <button class="conn-btn decline" data-id="${id}" data-name="${name}" aria-label="Decline connection from ${name}">Decline</button>
-            <button class="conn-btn transfer" data-id="${id}" data-name="${name}" aria-label="Transfer lead from ${name}" aria-haspopup="dialog">Transfer</button>
+            <button class="conn-btn accept" data-id="${id}" aria-label="Accept connection from ${name}">Accept</button>
+            <button class="conn-btn decline" data-id="${id}" aria-label="Decline connection from ${name}">Decline</button>
+            <button class="conn-btn transfer" data-id="${id}" aria-label="Transfer lead from ${name}" aria-haspopup="dialog">Transfer</button>
           ` : `<span style="font-size:.8rem;color:var(--kc-text-3)">${statusLabel}</span>`}
         </div>
       </li>`;
   }).join('');
 
-  // Wire buttons
+  // Wire buttons — resolve display names from the map, never from DOM attributes.
   connList.querySelectorAll<HTMLButtonElement>('.conn-btn.accept').forEach(btn => {
     btn.addEventListener('click', async () => {
       const id = btn.dataset.id!;
-      const name = btn.dataset.name || 'Navigator';
+      const name = connNameMap.get(id) || 'Navigator';
       btn.disabled = true;
       try {
         const res = await fetch(`/api/connections/${id}/accept`, { method: 'PATCH' });
@@ -878,7 +888,7 @@ function renderConnections(connections: any[]) {
   connList.querySelectorAll<HTMLButtonElement>('.conn-btn.decline').forEach(btn => {
     btn.addEventListener('click', async () => {
       const id = btn.dataset.id!;
-      const name = btn.dataset.name || 'Navigator';
+      const name = connNameMap.get(id) || 'Navigator';
       btn.disabled = true;
       try {
         const res = await fetch(`/api/connections/${id}/decline`, { method: 'PATCH' });
@@ -893,7 +903,10 @@ function renderConnections(connections: any[]) {
   });
 
   connList.querySelectorAll<HTMLButtonElement>('.conn-btn.transfer').forEach(btn => {
-    btn.addEventListener('click', () => openTransfer(btn.dataset.id!, btn.dataset.name || 'lead'));
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.id!;
+      openTransfer(id, connNameMap.get(id) || 'lead');
+    });
   });
 }
 
@@ -930,14 +943,12 @@ function renderReminders(reminders: any[]) {
   remindList.innerHTML = reminders.map(r => {
     const urgent = r.dueAt && new Date(r.dueAt).getTime() < now + 3600000;
     const subject = esc(r.subject);
-    const label = r.contactName
-      ? `${subject} — <strong>${esc(r.contactName)}</strong>`
-      : subject;
+    const contactName = esc(r.contactName);
     return `
       <li class="remind-item ${urgent ? 'remind-item--urgent' : ''}" data-id="${esc(r.id)}">
         <div class="remind-indicator" aria-hidden="true"></div>
         <div class="remind-body">
-          <div class="remind-text">${label}</div>
+          <div class="remind-text">${contactName ? `${subject} — <strong>${contactName}</strong>` : subject}</div>
           <div class="remind-meta">${esc(formatDue(r.dueAt))}</div>
         </div>
         <button class="remind-done" aria-label="Mark reminder as done: ${subject}">
